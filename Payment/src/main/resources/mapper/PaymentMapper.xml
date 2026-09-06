@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bookmall.payment.mapper.PaymentMapper">
+
+    <!-- 结果映射 -->
+    <resultMap id="BaseResultMap" type="com.bookmall.payment.entity.Payment">
+        <id column="payment_id" property="paymentId"/>
+        <result column="payment_no" property="paymentNo"/>
+        <result column="order_id" property="orderId"/>
+        <result column="user_id" property="userId"/>
+        <result column="amount" property="amount"/>
+        <result column="pay_type" property="payType"/>
+        <result column="status" property="status"/>
+        <result column="transaction_id" property="transactionId"/>
+        <result column="callback_data" property="callbackData"/>
+        <result column="pay_time" property="payTime"/>
+        <result column="expire_time" property="expireTime"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="status_desc" property="statusDesc"/>
+        <result column="pay_type_desc" property="payTypeDesc"/>
+        <result column="username" property="username"/>
+    </resultMap>
+
+    <!-- 通用查询字段 -->
+    <sql id="Base_Column_List">
+        p.payment_id, p.payment_no, p.order_id, p.user_id, p.amount,
+        p.pay_type, p.status, p.transaction_id, p.callback_data,
+        p.pay_time, p.expire_time, p.create_time, p.update_time
+    </sql>
+
+    <!-- 分页查询用户支付记录 -->
+    <select id="selectUserPaymentPage" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>,
+        CASE p.status
+        WHEN 0 THEN '待支付'
+        WHEN 1 THEN '处理中'
+        WHEN 2 THEN '支付成功'
+        WHEN 3 THEN '支付失败'
+        WHEN 4 THEN '已取消'
+        WHEN 5 THEN '退款中'
+        WHEN 6 THEN '已退款'
+        ELSE '未知'
+        END AS status_desc,
+        CASE p.pay_type
+        WHEN 0 THEN '余额支付'
+        WHEN 1 THEN '支付宝'
+        WHEN 2 THEN '微信支付'
+        ELSE '其他'
+        END AS pay_type_desc,
+        u.username
+        FROM tb_payment p
+        LEFT JOIN tb_user u ON p.user_id = u.user_id
+        WHERE p.user_id = #{userId}
+        <if test="status != null">
+            AND p.status = #{status}
+        </if>
+        ORDER BY p.create_time DESC
+    </select>
+
+    <!-- 分页查询所有支付记录（管理员） -->
+    <select id="selectAllPaymentPage" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>,
+        CASE p.status
+        WHEN 0 THEN '待支付'
+        WHEN 1 THEN '处理中'
+        WHEN 2 THEN '支付成功'
+        WHEN 3 THEN '支付失败'
+        WHEN 4 THEN '已取消'
+        WHEN 5 THEN '退款中'
+        WHEN 6 THEN '已退款'
+        ELSE '未知'
+        END AS status_desc,
+        CASE p.pay_type
+        WHEN 0 THEN '余额支付'
+        WHEN 1 THEN '支付宝'
+        WHEN 2 THEN '微信支付'
+        ELSE '其他'
+        END AS pay_type_desc,
+        u.username
+        FROM tb_payment p
+        LEFT JOIN tb_user u ON p.user_id = u.user_id
+        <where>
+            <if test="userId != null">
+                AND p.user_id = #{userId}
+            </if>
+            <if test="status != null">
+                AND p.status = #{status}
+            </if>
+            <if test="startTime != null">
+                AND p.create_time >= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND p.create_time &lt;= #{endTime}
+            </if>
+        </where>
+        ORDER BY p.create_time DESC
+    </select>
+
+</mapper>

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.example</groupId>
+    <artifactId>book-mall</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <!-- 所有微服务子模块 -->
+    <modules>
+        <module>Common</module>
+        <module>User</module>
+        <module>Admin</module>
+        <module>Book</module>
+        <module>Category</module>
+        <module>Cart</module>
+        <module>Order</module>
+        <module>Payment</module>
+        <module>Address</module>
+        <module>Gateway</module>
+        <module>Review</module>
+    </modules>
+
+    <!-- 全局版本统一管控（适配JDK8全套版本） -->
+    <properties>
+        <!-- JDK8 编译标准 -->
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <!-- SpringBoot 2.7.18 兼容JDK8最终LTS版本 -->
+        <spring.boot.version>2.7.18</spring.boot.version>
+        <!-- Spring Cloud Alibaba 适配Boot2.7版本 -->
+        <spring.cloud.alibaba.version>2021.0.5.0</spring.cloud.alibaba.version>
+        <!-- Spring Cloud 原生配套版本 -->
+        <spring.cloud.version>2021.0.5</spring.cloud.version>
+        <!-- JWT 兼容JDK8低版本 -->
+        <jjwt.version>0.9.1</jjwt.version>
+        <!-- Hutool 最后支持JDK8版本 -->
+        <hutool.version>5.8.16</hutool.version>
+        <!-- Spring Security 加密工具版本 -->
+        <bcrypt.version>5.7.1</bcrypt.version>
+        <!-- MySQL驱动 -->
+        <mysql.version>8.0.33</mysql.version>
+        <!-- MyBatis-Plus 适配Boot2.7 -->
+        <mybatis.plus.version>3.5.3.1</mybatis.plus.version>
+        <!-- Lombok 稳定版 -->
+        <lombok.version>1.18.30</lombok.version>
+        <!-- Druid连接池 -->
+        <druid.version>1.2.18</druid.version>
+        <!-- Fastjson2 -->
+        <fastjson.version>2.0.32</fastjson.version>
+        <!-- SpringDoc/Swagger -->
+        <springdoc.version>1.7.0</springdoc.version>
+    </properties>
+
+    <!-- 统一依赖版本管理，子模块无需写version -->
+    <dependencyManagement>
+        <dependencies>
+            <!-- SpringBoot 版本锁 -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring.boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Spring Cloud 原生依赖锁 -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring.cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Spring Cloud Alibaba 微服务组件版本锁 -->
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>${spring.cloud.alibaba.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- 公共工具依赖统一版本 -->
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.fastjson2</groupId>
+                <artifactId>fastjson2</artifactId>
+                <version>${fastjson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mysql</groupId>
+                <artifactId>mysql-connector-j</artifactId>
+                <version>${mysql.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis.plus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid-spring-boot-starter</artifactId>
+                <version>${druid.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-ui</artifactId>
+                <version>${springdoc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-crypto</artifactId>
+                <version>${bcrypt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.12.0</version>
+            </dependency>
+
+            <!-- 子模块公共Common包 -->
+            <dependency>
+                <groupId>org.example</groupId>
+                <artifactId>Common</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <!-- 全局统一依赖（所有子模块自动继承） -->
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+    </dependencies>
+
+    <!-- 统一构建插件 -->
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.8.1</version>
+                    <configuration>
+                        <source>${maven.compiler.source}</source>
+                        <target>${maven.compiler.target}</target>
+                        <encoding>${maven.compiler.encoding}</encoding>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>${spring.boot.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+</project>

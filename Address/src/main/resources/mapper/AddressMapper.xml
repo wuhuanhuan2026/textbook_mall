@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bookmall.address.mapper.AddressMapper">
+
+    <!-- 结果映射 -->
+    <resultMap id="BaseResultMap" type="com.bookmall.address.entity.Address">
+        <id column="address_id" property="addressId"/>
+        <result column="user_id" property="userId"/>
+        <result column="receiver_name" property="receiverName"/>
+        <result column="receiver_phone" property="receiverPhone"/>
+        <result column="province" property="province"/>
+        <result column="city" property="city"/>
+        <result column="district" property="district"/>
+        <result column="detail_address" property="detailAddress"/>
+        <result column="is_default" property="isDefault"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <!-- 通用查询字段 -->
+    <sql id="Base_Column_List">
+        address_id, user_id, receiver_name, receiver_phone,
+        province, city, district, detail_address, is_default, create_time
+    </sql>
+
+    <!-- 根据用户ID查询所有地址 -->
+    <select id="selectByUserId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tb_address
+        WHERE user_id = #{userId}
+        ORDER BY create_time DESC
+    </select>
+
+    <!-- 查询用户的所有地址（默认地址排最前） -->
+    <select id="selectByUserIdWithDefaultFirst" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tb_address
+        WHERE user_id = #{userId}
+        ORDER BY is_default DESC, create_time DESC
+    </select>
+
+    <!-- 获取用户的默认地址 -->
+    <select id="selectDefaultByUserId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tb_address
+        WHERE user_id = #{userId} AND is_default = 1
+        LIMIT 1
+    </select>
+
+    <!-- 根据用户ID和地址ID查询 -->
+    <select id="selectByUserIdAndAddressId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tb_address
+        WHERE address_id = #{addressId} AND user_id = #{userId}
+    </select>
+
+    <!-- 批量删除用户的地址 -->
+    <delete id="batchDeleteByUserIds">
+        DELETE FROM tb_address
+        WHERE user_id IN
+        <foreach collection="userIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 检查地址是否属于用户 -->
+    <select id="countByAddressIdAndUserId" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_address
+        WHERE address_id = #{addressId} AND user_id = #{userId}
+    </select>
+
+    <!-- 获取用户的地址数量 -->
+    <select id="countAddressesByUserId" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_address
+        WHERE user_id = #{userId}
+    </select>
+
+    <!-- 统计用户地址数量 -->
+    <select id="countByUserId" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_address
+        WHERE user_id = #{userId}
+    </select>
+
+    <!-- 检查用户是否存在默认地址 -->
+    <select id="countDefaultByUserId" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_address
+        WHERE user_id = #{userId} AND is_default = 1
+    </select>
+
+    <!-- 取消用户的所有默认地址 -->
+    <update id="clearDefaultByUserId">
+        UPDATE tb_address
+        SET is_default = 0
+        WHERE user_id = #{userId} AND is_default = 1
+    </update>
+
+    <!-- 设置指定地址为默认 -->
+    <update id="setDefault">
+        UPDATE tb_address
+        SET is_default = 1
+        WHERE address_id = #{addressId} AND user_id = #{userId}
+    </update>
+
+</mapper>

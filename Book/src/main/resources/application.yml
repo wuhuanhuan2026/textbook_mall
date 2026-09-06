@@ -1,0 +1,117 @@
+# Book模块配置
+server:
+  port: 8083
+
+spring:
+  application:
+    name: book-service
+
+  # ========== 添加 config.import ==========
+  config:
+    import: optional:nacos:book-service.yaml
+
+  # ========== Nacos 配置 ==========
+  cloud:
+    nacos:
+      config:
+        enabled: true
+        server-addr: localhost:8848
+        file-extension: yaml
+        namespace: public
+        group: DEFAULT_GROUP
+        refresh-enabled: true
+      discovery:
+        enabled: true
+        server-addr: localhost:8848
+        namespace: public
+        group: DEFAULT_GROUP
+
+  # ========== 数据源配置 ==========
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/book_mall?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+    username: root
+    password: 123456
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      initial-size: 5
+      min-idle: 5
+      max-active: 20
+      max-wait: 60000
+      time-between-eviction-runs-millis: 60000
+      stat-view-servlet:
+        enabled: true
+        url-pattern: /druid/*
+        login-username: admin
+        login-password: admin
+
+  # ========== Redis配置 ==========
+  redis:
+    host: localhost
+    port: 6379
+    database: 3
+    password:
+    timeout: 5000ms
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: -1ms
+        max-idle: 8
+        min-idle: 0
+
+  # ========== Jackson配置 ==========
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    serialization:
+      write-dates-as-timestamps: false
+
+  # ========== ✅ 静态资源配置（新增） ==========
+  web:
+    resources:
+      static-locations:
+        - classpath:/static/
+        - classpath:/public/
+        - classpath:/resources/
+        - classpath:/META-INF/resources/
+        # 开发环境支持外部文件路径
+        - file:./src/main/resources/static/
+      # 静态资源缓存配置
+      cache:
+        period: 3600
+        cachecontrol:
+          max-age: 3600
+          no-cache: false
+  mvc:
+    static-path-pattern: /**
+
+# ========== 日志配置 ==========
+logging:
+  level:
+    com.bookmall.book: debug
+    com.bookmall.common: debug
+    org.springframework.web: info
+    org.springframework.data.redis: info
+    com.alibaba.nacos: warn
+    # 添加静态资源日志
+    org.springframework.web.servlet.resource: debug
+
+# ========== MyBatis-Plus配置 ==========
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.bookmall.book.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# ========== ✅ 自定义图片配置（新增） ==========
+book:
+  image:
+    # 图片访问基础路径
+    base-url: http://localhost:8083
+    # 图片存储路径（相对于静态资源）
+    path: /images/
+    # 本地存储路径（用于上传）
+    upload-path: ./src/main/resources/static/images/
+    # 默认图片
+    default-image: /images/default-cover.jpg

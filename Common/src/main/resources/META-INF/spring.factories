@@ -1,0 +1,19 @@
+# Spring Boot 自动配置
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.bookmall.common.config.RedisConfig,\
+  com.bookmall.common.config.SwaggerConfig,\
+  com.bookmall.common.config.WebMvcConfig,\
+  com.bookmall.common.config.GlobalExceptionHandler
+
+# Spring Boot 配置处理器（可选，用于提示配置）
+org.springframework.boot.autoconfigure.AutoConfiguration.imports=\
+  com.bookmall.common.config.RedisConfig,\
+  com.bookmall.common.config.SwaggerConfig,\
+  com.bookmall.common.config.WebMvcConfig,\
+  com.bookmall.common.config.GlobalExceptionHandler
+
+# 通用自动配置（Spring Boot 2.7+ 兼容）
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.bookmall.common.config.RedisConfig,\
+  com.bookmall.common.config.SwaggerConfig,\
+  com.bookmall.common.config.WebMvcConfig

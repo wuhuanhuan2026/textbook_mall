@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bookmall.review.mapper.ReviewMapper">
+
+    <!-- 结果映射 -->
+    <resultMap id="BaseResultMap" type="com.bookmall.review.entity.Review">
+        <id column="review_id" property="reviewId"/>
+        <result column="user_id" property="userId"/>
+        <result column="book_id" property="bookId"/>
+        <result column="order_id" property="orderId"/>
+        <result column="rating" property="rating"/>
+        <result column="content" property="content"/>
+        <result column="create_time" property="createTime"/>
+        <!-- 非数据库字段 -->
+        <result column="username" property="username"/>
+        <result column="user_avatar" property="userAvatar"/>
+        <result column="book_name" property="bookName"/>
+        <result column="book_cover" property="bookCover"/>
+        <result column="rating_stars" property="ratingStars"/>
+        <result column="rating_desc" property="ratingDesc"/>
+    </resultMap>
+
+    <!-- 通用查询字段 -->
+    <sql id="Base_Column_List">
+        r.review_id, r.user_id, r.book_id, r.order_id, r.rating, r.content, r.create_time
+    </sql>
+
+    <!-- 分页查询教材评价列表 -->
+    <select id="selectBookReviewPage" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>,
+        u.username,
+        u.avatar AS user_avatar,
+        b.book_name,
+        b.cover_image AS book_cover,
+        CASE r.rating
+        WHEN 1 THEN '⭐'
+        WHEN 2 THEN '⭐⭐'
+        WHEN 3 THEN '⭐⭐⭐'
+        WHEN 4 THEN '⭐⭐⭐⭐'
+        WHEN 5 THEN '⭐⭐⭐⭐⭐'
+        END AS rating_stars,
+        CASE r.rating
+        WHEN 1 THEN '很差'
+        WHEN 2 THEN '较差'
+        WHEN 3 THEN '一般'
+        WHEN 4 THEN '满意'
+        WHEN 5 THEN '非常满意'
+        END AS rating_desc
+        FROM tb_review r
+        LEFT JOIN tb_user u ON r.user_id = u.user_id
+        LEFT JOIN tb_book b ON r.book_id = b.book_id
+        WHERE r.book_id = #{bookId}
+        ORDER BY r.create_time DESC
+    </select>
+
+    <!-- 分页查询用户评价列表 -->
+    <select id="selectUserReviewPage" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>,
+        u.username,
+        u.avatar AS user_avatar,
+        b.book_name,
+        b.cover_image AS book_cover,
+        CASE r.rating
+        WHEN 1 THEN '⭐'
+        WHEN 2 THEN '⭐⭐'
+        WHEN 3 THEN '⭐⭐⭐'
+        WHEN 4 THEN '⭐⭐⭐⭐'
+        WHEN 5 THEN '⭐⭐⭐⭐⭐'
+        END AS rating_stars,
+        CASE r.rating
+        WHEN 1 THEN '很差'
+        WHEN 2 THEN '较差'
+        WHEN 3 THEN '一般'
+        WHEN 4 THEN '满意'
+        WHEN 5 THEN '非常满意'
+        END AS rating_desc
+        FROM tb_review r
+        LEFT JOIN tb_user u ON r.user_id = u.user_id
+        LEFT JOIN tb_book b ON r.book_id = b.book_id
+        WHERE r.user_id = #{userId}
+        ORDER BY r.create_time DESC
+    </select>
+
+    <!-- 查询评价详情（含用户和教材信息） -->
+    <select id="selectReviewDetail" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>,
+        u.username,
+        u.avatar AS user_avatar,
+        b.book_name,
+        b.cover_image AS book_cover,
+        CASE r.rating
+        WHEN 1 THEN '⭐'
+        WHEN 2 THEN '⭐⭐'
+        WHEN 3 THEN '⭐⭐⭐'
+        WHEN 4 THEN '⭐⭐⭐⭐'
+        WHEN 5 THEN '⭐⭐⭐⭐⭐'
+        END AS rating_stars,
+        CASE r.rating
+        WHEN 1 THEN '很差'
+        WHEN 2 THEN '较差'
+        WHEN 3 THEN '一般'
+        WHEN 4 THEN '满意'
+        WHEN 5 THEN '非常满意'
+        END AS rating_desc
+        FROM tb_review r
+        LEFT JOIN tb_user u ON r.user_id = u.user_id
+        LEFT JOIN tb_book b ON r.book_id = b.book_id
+        WHERE r.review_id = #{reviewId}
+    </select>
+
+    <!-- 批量删除评价 -->
+    <delete id="batchDelete">
+        DELETE FROM tb_review
+        WHERE review_id IN
+        <foreach collection="reviewIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 批量删除用户评价 -->
+    <delete id="batchDeleteByUserIds">
+        DELETE FROM tb_review
+        WHERE user_id IN
+        <foreach collection="userIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 批量删除教材评价 -->
+    <delete id="batchDeleteByBookIds">
+        DELETE FROM tb_review
+        WHERE book_id IN
+        <foreach collection="bookIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

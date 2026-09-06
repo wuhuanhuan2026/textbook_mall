@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bookmall.cart.mapper.CartMapper">
+
+    <!-- 结果映射 -->
+    <resultMap id="BaseResultMap" type="com.bookmall.cart.entity.Cart">
+        <id column="cart_id" property="cartId"/>
+        <result column="user_id" property="userId"/>
+        <result column="book_id" property="bookId"/>
+        <result column="quantity" property="quantity"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <!-- 非数据库字段 -->
+        <result column="book_name" property="bookName"/>
+        <result column="book_cover" property="bookCover"/>
+        <result column="price" property="price"/>
+        <result column="stock" property="stock"/>
+        <result column="author" property="author"/>
+        <result column="on_sale" property="onSale"/>
+    </resultMap>
+
+    <!-- 通用查询字段 -->
+    <sql id="Base_Column_List">
+        c.cart_id, c.user_id, c.book_id, c.quantity, c.create_time, c.update_time
+    </sql>
+
+    <!-- 查询购物车列表（含教材信息） -->
+    <select id="selectCartListByUserId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>,
+        b.book_name,
+        b.cover_image AS book_cover,
+        b.price,
+        b.stock,
+        b.author,
+        CASE WHEN b.status = 1 THEN 1 ELSE 0 END AS on_sale
+        FROM tb_cart c
+        INNER JOIN tb_book b ON c.book_id = b.book_id
+        WHERE c.user_id = #{userId}
+        ORDER BY c.update_time DESC
+    </select>
+
+    <!-- 批量删除购物车项 -->
+    <delete id="batchDelete">
+        DELETE FROM tb_cart
+        WHERE cart_id IN
+        <foreach collection="cartIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 批量删除用户购物车 -->
+    <delete id="batchDeleteByUserIds">
+        DELETE FROM tb_cart
+        WHERE user_id IN
+        <foreach collection="userIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>
