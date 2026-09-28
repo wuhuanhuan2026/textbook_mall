@@ -1,0 +1,50 @@
+环境版本检查记录
+检查日期：2026-09-28
+检查人：吴欢欢
+
+【操作系统】
+Microsoft Windows [版本 10.0.19045.6332]
+
+【JDK】
+openjdk version "1.8.0_492"
+OpenJDK Runtime Environment (Temurin)(build 1.8.0_492-b09)
+OpenJDK 64-Bit Server VM (Temurin)(build 25.492-b09, mixed mode)
+安装路径：D:\App\OpenJDK8U-jdk_x64_windows_hotspot_8u492b09\jdk8u492-b09
+
+【Node.js】
+v22.23.1
+安装路径：C:\Program Files\nodejs\
+
+【npm】
+10.9.8
+
+【Maven】
+Apache Maven 3.9.16 (2bdd9fddda4b155ebf8000e807eb73fd829a51d5)
+Maven home: D:\App\apache-maven\apache-maven-3.9.16-bin\apache-maven-3.9.16
+Java version: 1.8.0_492, vendor: Temurin
+
+【MySQL】
+Ver 14.14 Distrib 5.7.44, for Win64 (x86_64)
+安装路径：D:\App\mysql-5.7.44-winx64\mysql-5.7.44-winx64\bin
+
+【Git】
+git version 2.55.0.windows.5
+
+【Nacos】
+版本：2.2.3
+路径：D:\App\nacos-server-2.2.3
+
+【Redis】
+路径：D:\APP\redis-server.exe
+
+【Navicat】
+版本：Navicat Premium Lite 17
+路径：C:\Users\Administrator\Desktop\Application
+
+【IntelliJ IDEA】
+版本：IntelliJ IDEA Community Edition 2025.2.6
+路径：D:\App\ideaIC-2025.2.6.win\bin
+
+【Visual Studio Code】
+版本：1.127.0
+路径：D:\App\VSCode-win32-x64-1.127.0

@@ -18,9 +18,25 @@ import Footer from '@/components/Footer.vue'
 
 const route = useRoute()
 
-// 登录和注册页面不显示头部和底部
-const showHeader = computed(() => !['Login', 'Register'].includes(route.name))
-const showFooter = computed(() => !['Login', 'Register'].includes(route.name))
+/**
+ * 判断当前页面是否应该隐藏前台 Header / Footer
+ * 隐藏规则：
+ *   1. 登录、注册页面
+ *   2. 所有后台路由（以 /admin 开头）
+ */
+const hideLayout = computed(() => {
+  // 登录、注册页不显示
+  const authPages = ['Login', 'Register']
+  if (authPages.includes(route.name)) return true
+
+  // 后台路由不显示（/admin 开头）
+  if (route.path.startsWith('/admin')) return true
+
+  return false
+})
+
+const showHeader = computed(() => !hideLayout.value)
+const showFooter = computed(() => !hideLayout.value)
 </script>
 
 <style>

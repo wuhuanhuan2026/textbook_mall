@@ -547,3 +547,104 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- | 用户     | testuser2 | 123456   | 500.00 | 正常 |
 --
 -- ============================================================
+
+
+UPDATE tb_user SET balance = 500.00 WHERE username = 'testuser';
+
+select * from tb_book;
+
+USE book_mall;
+DESC tb_admin;
+
+USE book_mall;
+
+ALTER TABLE tb_admin
+    ADD COLUMN real_name       VARCHAR(50)  DEFAULT NULL COMMENT '真实姓名'   AFTER status,
+    ADD COLUMN phone           VARCHAR(20)  DEFAULT NULL COMMENT '手机号'     AFTER real_name,
+    ADD COLUMN email           VARCHAR(100) DEFAULT NULL COMMENT '邮箱'       AFTER phone,
+    ADD COLUMN avatar          VARCHAR(255) DEFAULT NULL COMMENT '头像'       AFTER email,
+    ADD COLUMN last_login_ip   VARCHAR(50)  DEFAULT NULL COMMENT '最后登录IP' AFTER avatar,
+    ADD COLUMN last_login_time DATETIME     DEFAULT NULL COMMENT '最后登录时间' AFTER last_login_ip,
+    ADD COLUMN update_time     DATETIME     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间' AFTER create_time;
+
+    USE book_mall;
+
+-- 直接更新余额
+UPDATE tb_user SET balance = 500.00 WHERE username = 'sunqi';
+
+-- 验证
+SELECT user_id, username, balance FROM tb_user WHERE username = 'sunqi';
+
+
+
+
+   USE book_mall;
+
+INSERT INTO tb_address
+(user_id, receiver_name, receiver_phone, province, city, district, detail_address, is_default)
+VALUES
+(6, '孙七', '13800138009', '江苏省', '南京市', '鼓楼区', '南京大学鼓楼校区南园8舍301', 1),
+(6, '孙七', '13800138010', '江苏省', '苏州市', '姑苏区', '苏州大学本部敬文书院', 0);
+
+
+USE book_mall;
+
+-- ============================================================
+--   7 个空分类各补 5 本教材
+-- ============================================================
+
+-- 管理学 (category_id = 7) —— 5本
+INSERT INTO tb_book (book_name, isbn, author, publisher, category_id, price, original_price, stock, cover_image, description, status, sales) VALUES
+('管理学原理', '978-7-30-11101-1', '斯蒂芬·罗宾斯', '中国人民大学出版社', 7, 68.00, 82.00, 50, '/images/management1.jpg', '管理学经典入门教材', 1, 20),
+('组织行为学', '978-7-30-11102-2', '斯蒂芬·罗宾斯', '中国人民大学出版社', 7, 72.00, 88.00, 40, '/images/management2.jpg', '组织行为学经典教材', 1, 15),
+('市场营销学', '978-7-30-11103-3', '菲利普·科特勒', '中国人民大学出版社', 7, 78.00, 95.00, 45, '/images/management3.jpg', '市场营销经典教材', 1, 25),
+('人力资源管理', '978-7-30-11104-4', '加里·德斯勒', '中国人民大学出版社', 7, 75.00, 92.00, 35, '/images/management4.jpg', '人力资源管理经典教材', 1, 18),
+('战略管理', '978-7-30-11105-5', '迈克尔·波特', '华夏出版社', 7, 82.00, 99.00, 30, '/images/management5.jpg', '战略管理经典教材', 1, 12);
+
+-- 历史学 (category_id = 10) —— 5本
+INSERT INTO tb_book (book_name, isbn, author, publisher, category_id, price, original_price, stock, cover_image, description, status, sales) VALUES
+('中国通史', '978-7-10-22201-1', '吕思勉', '中华书局', 10, 88.00, 108.00, 40, '/images/history1.jpg', '中国通史经典著作', 1, 20),
+('世界史', '978-7-10-22202-2', '斯塔夫里阿诺斯', '北京大学出版社', 10, 98.00, 120.00, 35, '/images/history2.jpg', '全球通史经典教材', 1, 18),
+('史记', '978-7-10-22203-3', '司马迁', '中华书局', 10, 128.00, 158.00, 25, '/images/history3.jpg', '中国史学经典著作', 1, 15),
+('明朝那些事儿', '978-7-10-22204-4', '当年明月', '浙江人民出版社', 10, 55.00, 68.00, 60, '/images/history4.jpg', '通俗历史读物', 1, 30),
+('全球通史', '978-7-10-22205-5', '斯塔夫里阿诺斯', '上海社会科学院出版社', 10, 108.00, 128.00, 30, '/images/history5.jpg', '世界史经典教材', 1, 12);
+
+-- 哲学 (category_id = 11) —— 5本
+INSERT INTO tb_book (book_name, isbn, author, publisher, category_id, price, original_price, stock, cover_image, description, status, sales) VALUES
+('西方哲学史', '978-7-20-33301-1', '罗素', '商务印书馆', 11, 78.00, 95.00, 40, '/images/philosophy1.jpg', '西方哲学史经典著作', 1, 18),
+('中国哲学简史', '978-7-20-33302-2', '冯友兰', '北京大学出版社', 11, 68.00, 82.00, 45, '/images/philosophy2.jpg', '中国哲学经典教材', 1, 22),
+('苏菲的世界', '978-7-20-33303-3', '乔斯坦·贾德', '作家出版社', 11, 45.00, 55.00, 60, '/images/philosophy3.jpg', '哲学入门经典读物', 1, 35),
+('理想国', '978-7-20-33304-4', '柏拉图', '商务印书馆', 11, 58.00, 72.00, 30, '/images/philosophy4.jpg', '西方哲学经典著作', 1, 15),
+('论语', '978-7-20-33305-5', '孔子', '中华书局', 11, 38.00, 46.00, 50, '/images/philosophy5.jpg', '中国儒家经典著作', 1, 28);
+
+-- 医学 (category_id = 12) —— 5本
+INSERT INTO tb_book (book_name, isbn, author, publisher, category_id, price, original_price, stock, cover_image, description, status, sales) VALUES
+('人体解剖学', '978-7-40-44401-1', '柏树令', '人民卫生出版社', 12, 98.00, 118.00, 40, '/images/medical1.jpg', '医学基础经典教材', 1, 15),
+('生理学', '978-7-40-44402-2', '王庭槐', '人民卫生出版社', 12, 88.00, 105.00, 45, '/images/medical2.jpg', '医学基础经典教材', 1, 18),
+('病理学', '978-7-40-44403-3', '步宏', '人民卫生出版社', 12, 92.00, 110.00, 35, '/images/medical3.jpg', '医学基础经典教材', 1, 12),
+('内科学', '978-7-40-44404-4', '葛均波', '人民卫生出版社', 12, 128.00, 152.00, 30, '/images/medical4.jpg', '临床医学经典教材', 1, 10),
+('外科学', '978-7-40-44405-5', '陈孝平', '人民卫生出版社', 12, 138.00, 165.00, 25, '/images/medical5.jpg', '临床医学经典教材', 1, 8);
+
+-- 艺术 (category_id = 13) —— 5本
+INSERT INTO tb_book (book_name, isbn, author, publisher, category_id, price, original_price, stock, cover_image, description, status, sales) VALUES
+('艺术概论', '978-7-50-55501-1', '彭吉象', '北京大学出版社', 13, 58.00, 72.00, 50, '/images/art1.jpg', '艺术学基础教材', 1, 20),
+('中国美术史', '978-7-50-55502-2', '洪再新', '中国美术学院出版社', 13, 88.00, 105.00, 35, '/images/art2.jpg', '中国美术史经典教材', 1, 15),
+('西方美术史', '978-7-50-55503-3', '贡布里希', '广西美术出版社', 13, 98.00, 118.00, 30, '/images/art3.jpg', '西方美术史经典著作', 1, 12),
+('音乐鉴赏', '978-7-50-55504-4', '王耀华', '高等教育出版社', 13, 45.00, 55.00, 60, '/images/art4.jpg', '音乐鉴赏经典教材', 1, 25),
+('设计美学', '978-7-50-55505-5', '李砚祖', '清华大学出版社', 13, 68.00, 82.00, 40, '/images/art5.jpg', '设计美学经典教材', 1, 18);
+
+-- 教育 (category_id = 14) —— 5本
+INSERT INTO tb_book (book_name, isbn, author, publisher, category_id, price, original_price, stock, cover_image, description, status, sales) VALUES
+('教育学原理', '978-7-60-66601-1', '叶澜', '人民教育出版社', 14, 58.00, 72.00, 50, '/images/education1.jpg', '教育学基础经典教材', 1, 22),
+('教育心理学', '978-7-60-66602-2', '陈琦', '高等教育出版社', 14, 65.00, 78.00, 45, '/images/education2.jpg', '教育心理学经典教材', 1, 18),
+('中国教育史', '978-7-60-66603-3', '孙培青', '华东师范大学出版社', 14, 72.00, 88.00, 35, '/images/education3.jpg', '教育史经典教材', 1, 15),
+('课程与教学论', '978-7-60-66604-4', '王本陆', '高等教育出版社', 14, 55.00, 68.00, 40, '/images/education4.jpg', '课程与教学论经典教材', 1, 20),
+('教育研究方法', '978-7-60-66605-5', '袁振国', '高等教育出版社', 14, 62.00, 75.00, 38, '/images/education5.jpg', '教育研究方法经典教材', 1, 12);
+
+-- 心理学 (category_id = 15) —— 5本
+INSERT INTO tb_book (book_name, isbn, author, publisher, category_id, price, original_price, stock, cover_image, description, status, sales) VALUES
+('普通心理学', '978-7-70-77701-1', '彭聃龄', '北京师范大学出版社', 15, 78.00, 95.00, 45, '/images/psychology1.jpg', '心理学基础经典教材', 1, 25),
+('发展心理学', '978-7-70-77702-2', '林崇德', '人民教育出版社', 15, 72.00, 88.00, 40, '/images/psychology2.jpg', '发展心理学经典教材', 1, 20),
+('社会心理学', '978-7-70-77703-3', '戴维·迈尔斯', '人民邮电出版社', 15, 88.00, 105.00, 35, '/images/psychology3.jpg', '社会心理学经典教材', 1, 18),
+('认知心理学', '978-7-70-77704-4', '王甦', '北京大学出版社', 15, 68.00, 82.00, 30, '/images/psychology4.jpg', '认知心理学经典教材', 1, 15),
+('心理咨询与治疗', '978-7-70-77705-5', '钱铭怡', '北京大学出版社', 15, 75.00, 90.00, 28, '/images/psychology5.jpg', '心理咨询经典教材', 1, 12);

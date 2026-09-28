@@ -232,6 +232,10 @@ const loadMoreReviews = () => {
   fetchReviews(true)
 }
 
+/**
+ * ✅ 加入购物车（唯一提示源）
+ * Store 层不弹提示，只负责数据操作
+ */
 const handleAddToCart = async () => {
   if (!userStore.isLoggedIn) {
     ElMessage.warning('请先登录')
@@ -246,7 +250,7 @@ const handleAddToCart = async () => {
   
   try {
     await cartStore.addToCart(book.value.bookId, quantity.value)
-    ElMessage.success('已加入购物车')
+    ElMessage.success('已加入购物车')  // ✅ 唯一提示源
   } catch (error) {
     ElMessage.error(error.message || '加入购物车失败')
   }

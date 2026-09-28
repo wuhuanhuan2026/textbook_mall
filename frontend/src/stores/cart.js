@@ -1,10 +1,13 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { cartApi } from '@/api/cart'
-import { ElMessage } from 'element-plus'
 
 /**
  * 购物车状态管理
+ *
+ * ⚠️ 注意：Store 层不负责 UI 提示（ElMessage），
+ * 由调用它的页面组件（如 BookDetail.vue、Cart.vue）自己处理提示，
+ * 避免同一操作出现重复提示。
  */
 export const useCartStore = defineStore('cart', () => {
   // ========== State ==========
@@ -31,6 +34,7 @@ export const useCartStore = defineStore('cart', () => {
   })
 
   // ========== Actions ==========
+
   /**
    * 获取购物车列表
    */
@@ -55,78 +59,58 @@ export const useCartStore = defineStore('cart', () => {
 
   /**
    * 添加到购物车
-   * ✅ 修复：传递对象 { bookId, quantity }
+   * ✅ 只负责数据操作，不弹提示
+   * 调用方（如 BookDetail.vue）自己弹 ElMessage
    */
   const addToCart = async (bookId, quantity = 1) => {
-    try {
-      // ✅ 关键修复：传递对象，而不是两个独立参数
-      const res = await cartApi.addToCart({ bookId, quantity })
-      console.log('addToCart 响应:', res)
-      
-      if (res && res.code === 200) {
-        await fetchCart()
-        ElMessage.success('已加入购物车')
-        return res.data
-      }
-      throw new Error(res?.message || '添加失败')
-    } catch (error) {
-      console.error('加入购物车失败:', error)
-      ElMessage.error(error.message || '添加失败')
-      throw error
+    const res = await cartApi.addToCart({ bookId, quantity })
+    console.log('addToCart 响应:', res)
+
+    if (res && res.code === 200) {
+      await fetchCart()
+      return res.data
     }
+    throw new Error(res?.message || '添加失败')
   }
 
   /**
    * 更新商品数量
+   * ✅ 只负责数据操作，不弹成功提示
+   * （数量修改很频繁，弹提示会打扰用户）
    */
   const updateQuantity = async (cartId, quantity) => {
-    try {
-      const res = await cartApi.updateCartItem(cartId, { quantity })
-      if (res && res.code === 200) {
-        await fetchCart()
-        return res.data
-      }
-      throw new Error(res?.message || '更新失败')
-    } catch (error) {
-      ElMessage.error(error.message || '更新失败')
-      throw error
+    const res = await cartApi.updateCartItem(cartId, { quantity })
+    if (res && res.code === 200) {
+      await fetchCart()
+      return res.data
     }
+    throw new Error(res?.message || '更新失败')
   }
 
   /**
    * 删除购物车项
+   * ✅ 只负责数据操作，不弹提示
    */
   const removeItem = async (cartId) => {
-    try {
-      const res = await cartApi.deleteCartItem(cartId)
-      if (res && res.code === 200) {
-        await fetchCart()
-        ElMessage.success('已删除')
-        return true
-      }
-      throw new Error(res?.message || '删除失败')
-    } catch (error) {
-      ElMessage.error(error.message || '删除失败')
-      throw error
+    const res = await cartApi.deleteCartItem(cartId)
+    if (res && res.code === 200) {
+      await fetchCart()
+      return true
     }
+    throw new Error(res?.message || '删除失败')
   }
 
   /**
    * 清空购物车
+   * ✅ 只负责数据操作，不弹提示
    */
   const clearCart = async () => {
-    try {
-      const res = await cartApi.clearCart()
-      if (res && res.code === 200) {
-        cartItems.value = []
-        ElMessage.success('已清空购物车')
-        return true
-      }
-      throw new Error(res?.message || '清空失败')
-    } catch (error) {
-      ElMessage.error(error.message || '清空失败')
-      throw error
+    const res = await cartApi.clearCart()
+    if (res && res.code === 200) {
+      cartItems.value = []
+      return true
     }
+    throw new Error(res?.message || '清空失败')
   }
 
   return {

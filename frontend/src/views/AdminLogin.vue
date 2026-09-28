@@ -60,6 +60,8 @@ import { ref, reactive } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { adminApi } from '@/api/admin'
+// ✅ 导入存储工具
+import { setAdminToken, setAdminInfo, getAdminToken } from '@/utils/storage'
 
 const router = useRouter()
 const route = useRoute()
@@ -83,38 +85,89 @@ const rules = {
 }
 
 const handleLogin = async () => {
-  if (!formRef.value) return
+  console.log('=== 🔐 管理员登录开始 ===')
+  
+  if (!formRef.value) {
+    console.error('❌ formRef 为空')
+    return
+  }
   
   await formRef.value.validate(async (valid) => {
+    console.log('表单验证结果:', valid)
     if (!valid) return
+    
+    console.log('📤 登录请求参数:', { username: form.username, password: '***' })
     
     loading.value = true
     try {
       const res = await adminApi.login(form)
       
+      console.log('📥 登录响应:', res)
+      console.log('📥 响应 code:', res?.code)
+      console.log('📥 响应 data:', res?.data)
+      console.log('📥 响应 token:', res?.data?.token)
+      console.log('📥 响应 message:', res?.message)
+      
       // 检查响应是否成功
       if (res.code === 200 && res.data) {
-        // 存储管理员信息
-        localStorage.setItem('admin_token', res.data.token)
-        localStorage.setItem('admin_info', JSON.stringify(res.data))
+        // ✅ 检查 token 是否存在
+        const token = res.data.token
+        if (!token) {
+          console.error('❌ token 为空！')
+          ElMessage.error('登录失败：未获取到 token')
+          loading.value = false
+          return
+        }
+        
+        console.log('✅ token 获取成功，长度:', token.length)
+        
+        // ✅ 使用统一的存储工具存储管理员信息
+        setAdminToken(token)
+        setAdminInfo(res.data)
+        
+        // ✅ 验证存储是否成功
+        const savedToken = getAdminToken()
+        console.log('💾 存储后读取 token:', savedToken)
+        console.log('💾 token 是否匹配:', savedToken === token)
+        
+        if (!savedToken) {
+          console.error('❌ token 存储失败！')
+          ElMessage.error('登录状态保存失败，请重试')
+          loading.value = false
+          return
+        }
+        
+        console.log('✅ 登录状态保存成功')
         ElMessage.success(res.message || '登录成功')
         
-        // 跳转到管理后台
+        // ✅ 延迟跳转，确保状态完全更新
         const redirect = route.query.redirect || '/admin/dashboard'
-        router.push(redirect)
+        console.log('🚀 准备跳转到:', redirect)
+        
+        setTimeout(() => {
+          console.log('🚀 执行跳转:', redirect)
+          router.push(redirect)
+        }, 300)
+        
       } else {
+        console.warn('⚠️ 登录响应异常:', res)
         ElMessage.error(res.message || '登录失败')
       }
     } catch (error) {
-      console.error('登录错误:', error)
+      console.error('❌ 登录错误:', error)
+      console.error('❌ 错误详情:', error.response?.data || error.message)
       ElMessage.error(error.message || '登录失败，请检查用户名和密码')
     } finally {
       loading.value = false
+      console.log('=== 🔐 管理员登录结束 ===')
     }
   })
 }
 
-const goToUserLogin = () => router.push('/login')
+const goToUserLogin = () => {
+  console.log('跳转到用户登录页')
+  router.push('/login')
+}
 </script>
 
 <style scoped>

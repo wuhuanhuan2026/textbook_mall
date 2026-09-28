@@ -27,23 +27,23 @@
           
           <div class="order-body">
             <div class="order-items">
-              <div class="order-product" v-for="item in order.items" :key="item.itemId">
+              <div class="order-product" v-for="item in (order.items || [])" :key="item.itemId">
                 <img :src="item.bookCover || '/default-cover.jpg'" :alt="item.bookName" />
                 <div class="product-info">
                   <span class="product-name">{{ item.bookName }}</span>
-                  <span class="product-price">¥{{ item.price.toFixed(2) }} × {{ item.quantity }}</span>
+                  <span class="product-price">¥{{ safeToFixed(item.price) }} × {{ item.quantity }}</span>
                 </div>
               </div>
             </div>
             
             <div class="order-summary">
               <span>共 {{ order.items?.length || 0 }} 件商品</span>
-              <span class="order-total">实付：¥{{ order.totalAmount.toFixed(2) }}</span>
+              <span class="order-total">实付：¥{{ safeToFixed(order.totalAmount) }}</span>
             </div>
           </div>
           
           <div class="order-footer">
-            <span class="order-time">下单时间：{{ order.createTime }}</span>
+            <span class="order-time">下单时间：{{ order.createTime || '-' }}</span>
             <div class="order-actions">
               <el-button size="small" @click="viewDetail(order.orderId)">查看详情</el-button>
               <el-button 
@@ -93,18 +93,22 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { orderApi } from '@/api/order'
 
 const router = useRouter()
+const route = useRoute()
+
 const loading = ref(false)
 const orderList = ref([])
 const total = ref(0)
 const pageNum = ref(1)
 const pageSize = ref(5)
-const activeStatus = ref('all')
+
+// ✅ 从 URL 参数读取状态，默认为 'all'
+const activeStatus = ref(route.query.status || 'all')
 
 const statusMap = {
   0: { text: '待付款', class: 'pending' },
@@ -117,6 +121,20 @@ const statusMap = {
 const getStatusText = (status) => statusMap[status]?.text || '未知'
 const getStatusClass = (status) => statusMap[status]?.class || ''
 
+/**
+ * ✅ 安全格式化数字
+ */
+const safeToFixed = (value, digits = 2) => {
+  if (value === undefined || value === null || isNaN(value)) {
+    return '0.00'
+  }
+  const num = Number(value)
+  if (isNaN(num)) {
+    return '0.00'
+  }
+  return num.toFixed(digits)
+}
+
 const fetchOrders = async () => {
   loading.value = true
   try {
@@ -128,17 +146,40 @@ const fetchOrders = async () => {
       params.status = Number(activeStatus.value)
     }
     
+    // ✅ 添加调试日志
+    console.log('📦 请求订单参数:', params)
+    
     const result = await orderApi.getOrderList(params)
-    orderList.value = result.list || []
-    total.value = result.total || 0
+    
+    // ✅ 添加调试日志
+    console.log('📦 订单响应:', result)
+    
+    // ✅ 适配不同的响应格式
+    if (result && result.list !== undefined) {
+      orderList.value = result.list || []
+      total.value = result.total || 0
+    } else if (result && result.data && result.data.list !== undefined) {
+      orderList.value = result.data.list || []
+      total.value = result.data.total || 0
+    } else {
+      orderList.value = []
+      total.value = 0
+    }
+    
+    // ✅ 打印当前标签页和订单数量
+    console.log(`📦 当前标签: ${activeStatus.value}, 订单数量: ${orderList.value.length}, 总数: ${total.value}`)
+    
   } catch (error) {
-    console.error('获取订单列表失败:', error)
+    console.error('❌ 获取订单列表失败:', error)
+    orderList.value = []
+    total.value = 0
   } finally {
     loading.value = false
   }
 }
 
 const handleTabChange = () => {
+  console.log(`📦 切换到标签: ${activeStatus.value}`)
   pageNum.value = 1
   fetchOrders()
 }
@@ -159,7 +200,8 @@ const handlePay = async (orderId) => {
     fetchOrders()
   } catch (error) {
     if (error !== 'cancel') {
-      ElMessage.error('支付失败')
+      console.error('❌ 支付失败:', error)
+      ElMessage.error(error.message || '支付失败')
     }
   }
 }
@@ -176,7 +218,8 @@ const handleCancel = async (orderId) => {
     fetchOrders()
   } catch (error) {
     if (error !== 'cancel') {
-      ElMessage.error('取消失败')
+      console.error('❌ 取消失败:', error)
+      ElMessage.error(error.message || '取消失败')
     }
   }
 }
@@ -193,12 +236,47 @@ const handleReceive = async (orderId) => {
     fetchOrders()
   } catch (error) {
     if (error !== 'cancel') {
-      ElMessage.error('确认收货失败')
+      console.error('❌ 确认收货失败:', error)
+      ElMessage.error(error.message || '确认收货失败')
     }
   }
 }
 
-onMounted(fetchOrders)
+// ✅ 监听路由参数变化（从其他页面跳转时携带 status 参数）
+watch(
+  () => route.query.status,
+  (newStatus) => {
+    if (newStatus !== undefined && newStatus !== null) {
+      console.log(`📦 路由参数变化: status=${newStatus}`)
+      activeStatus.value = newStatus
+      fetchOrders()
+    }
+  },
+  { immediate: false }
+)
+
+// ✅ 监听 activeStatus 变化，更新 URL（可选：实现浏览器前进/后退）
+watch(
+  activeStatus,
+  (newStatus) => {
+    // 不触发路由跳转，只更新查询参数（避免循环）
+    const query = { ...route.query }
+    if (newStatus === 'all') {
+      delete query.status
+    } else {
+      query.status = newStatus
+    }
+    // 只在路径变化时更新
+    if (route.query.status !== query.status) {
+      router.replace({ query })
+    }
+  }
+)
+
+onMounted(() => {
+  console.log('📦 订单页面初始化, status:', activeStatus.value)
+  fetchOrders()
+})
 </script>
 
 <style scoped>

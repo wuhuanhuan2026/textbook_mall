@@ -1,0 +1,45 @@
+spring:
+  application:
+    name: gateway-service
+
+  # ========== 激活环境（默认dev） ==========
+  profiles:
+    active: dev
+
+  # ========== Nacos 配置中心 ==========
+  cloud:
+    nacos:
+      # ---------- 配置中心 ----------
+      config:
+        enabled: true
+        server-addr: 127.0.0.1:8848          # ✅ 统一用 127.0.0.1，避免 IPv6 解析问题
+        file-extension: yaml
+        namespace: public
+        group: DEFAULT_GROUP
+        refresh-enabled: true
+        # 共享配置（所有微服务通用）
+        shared-configs:
+          - data-id: common-config.yaml
+            group: DEFAULT_GROUP
+            refresh: true
+        # 扩展配置（按环境区分：dev / test / prod）
+        extension-configs:
+          - data-id: gateway-service-${spring.profiles.active}.yaml
+            group: DEFAULT_GROUP
+            refresh: true
+      # ---------- 服务注册与发现 ----------
+      discovery:
+        enabled: true
+        server-addr: 127.0.0.1:8848          # ✅ 与 config 保持一致
+        namespace: public
+        group: DEFAULT_GROUP
+        ip: 127.0.0.1                        # ✅ 显式指定注册 IP，避免多网卡注册错误
+        port: 8090                           # ✅ 显式指定网关端口，与 application.yml 一致
+
+# ========== 日志配置 ==========
+logging:
+  level:
+    com.alibaba.nacos: warn
+    org.springframework.cloud.gateway: debug
+    com.bookmall.gateway: debug              # ✅ 增加自己网关包的日志级别
+    org.springframework.web: info

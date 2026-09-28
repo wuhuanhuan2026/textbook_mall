@@ -20,8 +20,24 @@
           </el-badge>
         </router-link>
 
-        <!-- 用户信息 -->
-        <div v-if="userStore.isLoggedIn" class="user-info">
+        <!-- ✅ 管理员已登录（优先判断） -->
+        <div v-if="isAdminLoggedIn" class="user-info">
+          <el-dropdown @command="handleAdminCommand">
+            <span class="username admin-tag">
+              🛡️ {{ adminInfo?.username || 'admin' }}
+              <el-icon><ArrowDown /></el-icon>
+            </span>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item command="admin">进入管理后台</el-dropdown-item>
+                <el-dropdown-item divided command="admin-logout">退出管理员登录</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </div>
+
+        <!-- 普通用户已登录 -->
+        <div v-else-if="userStore.isLoggedIn" class="user-info">
           <el-dropdown @command="handleCommand">
             <span class="username">
               {{ userStore.userInfo?.username || '用户' }}
@@ -48,20 +64,28 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { ShoppingCart, ArrowDown } from '@element-plus/icons-vue'
 import { useUserStore } from '@/stores/user'
 import { useCartStore } from '@/stores/cart'
+// ✅ 导入管理员的存储工具
+import { getAdminToken, getAdminInfo, clearAdmin } from '@/utils/storage'
 
 const router = useRouter()
 const userStore = useUserStore()
 const cartStore = useCartStore()
 
+// ✅ 判断管理员是否登录（从 localStorage 读取 admin_token）
+const isAdminLoggedIn = computed(() => !!getAdminToken())
+const adminInfo = computed(() => getAdminInfo())
+
 const goHome = () => router.push('/')
 const goToLogin = () => router.push('/login')
 const goToRegister = () => router.push('/register')
 
+// 普通用户菜单处理
 const handleCommand = async (command) => {
   if (command === 'logout') {
     await userStore.logout()
@@ -71,6 +95,19 @@ const handleCommand = async (command) => {
     router.push('/profile')
   } else if (command === 'address') {
     router.push('/address')
+  }
+}
+
+// ✅ 管理员菜单处理
+const handleAdminCommand = (command) => {
+  if (command === 'admin') {
+    // 进入管理后台
+    router.push('/admin/dashboard')
+  } else if (command === 'admin-logout') {
+    // 清除管理员 Token 和信息
+    clearAdmin()
+    ElMessage.success('管理员已退出')
+    router.push('/login')
   }
 }
 </script>
@@ -167,6 +204,12 @@ const handleCommand = async (command) => {
   display: flex;
   align-items: center;
   gap: 4px;
+}
+
+/* ✅ 管理员标签样式（橙色，区别于普通用户） */
+.username.admin-tag {
+  color: #E6A23C;
+  font-weight: 600;
 }
 
 .auth-buttons {

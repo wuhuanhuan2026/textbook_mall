@@ -67,10 +67,20 @@ import { useCartStore } from '@/stores/cart'
 const router = useRouter()
 const cartStore = useCartStore()
 
+/**
+ * 修改数量（不弹成功提示，避免频繁打扰用户）
+ */
 const updateQuantity = async (cartId, quantity) => {
-  await cartStore.updateQuantity(cartId, quantity)
+  try {
+    await cartStore.updateQuantity(cartId, quantity)
+  } catch (error) {
+    ElMessage.error(error.message || '更新失败')
+  }
 }
 
+/**
+ * 删除商品（弹一次成功提示）
+ */
 const removeItem = async (cartId) => {
   try {
     await ElMessageBox.confirm('确定要删除该商品吗？', '提示', {
@@ -79,12 +89,18 @@ const removeItem = async (cartId) => {
       type: 'warning'
     })
     await cartStore.removeItem(cartId)
-    ElMessage.success('已删除')
-  } catch {
-    // 取消删除
+    ElMessage.success('已删除')  // ✅ 唯一提示源
+  } catch (error) {
+    // 用户取消或删除失败
+    if (error && error.message && error.message !== 'cancel') {
+      ElMessage.error(error.message || '删除失败')
+    }
   }
 }
 
+/**
+ * 清空购物车（弹一次成功提示）
+ */
 const clearCart = async () => {
   try {
     await ElMessageBox.confirm('确定要清空购物车吗？', '提示', {
@@ -93,9 +109,12 @@ const clearCart = async () => {
       type: 'warning'
     })
     await cartStore.clearCart()
-    ElMessage.success('已清空购物车')
-  } catch {
-    // 取消清空
+    ElMessage.success('已清空购物车')  // ✅ 唯一提示源
+  } catch (error) {
+    // 用户取消或清空失败
+    if (error && error.message && error.message !== 'cancel') {
+      ElMessage.error(error.message || '清空失败')
+    }
   }
 }
 
