@@ -1,4 +1,0 @@
-Missing closing ')' in subexpression.
-    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
-    + FullyQualifiedErrorId : MissingEndParenthesisInSubexpression
- 
