@@ -1,0 +1,469 @@
+# 教材商城系统 - 种子数据脚本
+# 仅限开发环境使用
+# 依赖：需先执行 01、02
+
+USE book_mall;
+
+INSERT INTO tb_admin (username, password) VALUES
+('admin', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVKIUi');
+
+-- ============================================================
+-- 10.2 分类 (15个分类)
+-- ============================================================
+INSERT INTO tb_category (category_name, sort_order) VALUES
+('计算机', 1),
+('数学', 2),
+('英语', 3),
+('物理', 4),
+('化学', 5),
+('经济学', 6),
+('管理学', 7),
+('法学', 8),
+('文学', 9),
+('历史学', 10),
+('哲学', 11),
+('医学', 12),
+('艺术', 13),
+('教育', 14),
+('心理学', 15);
+
+-- ============================================================
+-- 10.3 测试用户 (密码统一: 123456)
+-- ============================================================
+INSERT INTO tb_user (username, password, phone, email, balance, status) VALUES
+('testuser',  '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVKIUi', '13800138000', 'testuser@qq.com', 100.00, 1),
+('zhangsan',  '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVKIUi', '13800138001', 'zhangsan@qq.com', 200.00, 1),
+('lisi',      '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVKIUi', '13800138002', 'lisi@qq.com', 150.00, 1),
+('wangwu',    '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVKIUi', '13800138003', 'wangwu@qq.com', 80.00, 1),
+('zhaoliu',   '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVKIUi', '13800138004', 'zhaoliu@qq.com', 300.00, 1),
+('sunqi',     '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVKIUi', '13800138005', 'sunqi@qq.com', 50.00, 0),   -- 已禁用
+('testuser2', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVKIUi', '13800138006', 'test2@qq.com', 500.00, 1);
+
+-- ============================================================
+-- 10.4 教材数据 (30本)
+-- ============================================================
+
+-- 计算机类 (category_id=1)
+INSERT INTO tb_book (book_name, isbn, author, publisher, category_id, price, original_price, stock, cover_image, description, status, sales) VALUES
+('Java核心技术 卷I', '978-7-111-12345-6', 'Cay S. Horstmann', '机械工业出版社', 1, 79.00, 99.00, 100, '/images/java-core.jpg', 'Java经典教材，深入浅出', 1, 50),
+('深入理解Java虚拟机', '978-7-111-23456-7', '周志明', '机械工业出版社', 1, 89.00, 109.00, 50, '/images/jvm.jpg', 'Java开发者必读，深入JVM底层原理', 1, 45),
+('Spring Boot实战', '978-7-121-34567-8', 'Craig Walls', '电子工业出版社', 1, 69.00, 89.00, 80, '/images/springboot.jpg', 'Spring Boot开发实战指南', 1, 38),
+('数据结构与算法分析', '978-7-111-45678-9', 'Mark Allen Weiss', '机械工业出版社', 1, 79.00, 99.00, 60, '/images/ds.jpg', '数据结构经典教材，Java语言描述', 1, 25),
+('计算机网络：自顶向下', '978-7-111-56789-0', 'James Kurose', '机械工业出版社', 1, 85.00, 99.00, 40, '/images/network.jpg', '计算机网络经典教材', 1, 32),
+('操作系统导论', '978-7-111-67890-1', 'Remzi Arpaci-Dusseau', '机械工业出版社', 1, 99.00, 129.00, 30, '/images/os.jpg', '操作系统经典教材，深入浅出', 1, 18);
+
+-- 数学类 (category_id=2)
+INSERT INTO tb_book (book_name, isbn, author, publisher, category_id, price, original_price, stock, cover_image, description, status, sales) VALUES
+('高等数学 上册', '978-7-04-12345-7', '同济大学数学系', '高等教育出版社', 2, 49.00, 58.00, 80, '/images/gaoshang.jpg', '同济大学经典教材上册', 1, 30),
+('高等数学 下册', '978-7-04-23456-8', '同济大学数学系', '高等教育出版社', 2, 49.00, 58.00, 70, '/images/gaoxia.jpg', '同济大学经典教材下册', 1, 25),
+('线性代数', '978-7-04-34567-9', '同济大学数学系', '高等教育出版社', 2, 39.00, 46.00, 90, '/images/linear.jpg', '线性代数经典教材', 1, 40),
+('概率论与数理统计', '978-7-04-45678-0', '浙江大学数学系', '高等教育出版社', 2, 42.00, 50.00, 60, '/images/probability.jpg', '概率统计经典教材', 1, 22),
+('数学分析 上册', '978-7-04-56789-1', '华东师范大学数学系', '高等教育出版社', 2, 45.00, 55.00, 40, '/images/mathanalysis.jpg', '数学分析经典教材', 1, 15),
+('数学分析 下册', '978-7-04-67890-2', '华东师范大学数学系', '高等教育出版社', 2, 45.00, 55.00, 35, '/images/mathanalysis2.jpg', '数学分析经典教材下册', 1, 12);
+
+-- 英语类 (category_id=3)
+INSERT INTO tb_book (book_name, isbn, author, publisher, category_id, price, original_price, stock, cover_image, description, status, sales) VALUES
+('大学英语 精读', '978-7-56-12345-8', '董亚芬', '上海外语教育出版社', 3, 45.00, 52.00, 60, '/images/english.jpg', '大学英语精读经典教材', 1, 20),
+('新概念英语 第三册', '978-7-56-23456-9', 'L.G. Alexander', '上海外语教育出版社', 3, 38.00, 45.00, 100, '/images/newconcept3.jpg', '英语学习经典教材', 1, 35),
+('新概念英语 第四册', '978-7-56-34567-0', 'L.G. Alexander', '上海外语教育出版社', 3, 42.00, 50.00, 80, '/images/newconcept4.jpg', '英语学习经典教材进阶', 1, 28),
+('商务英语口语', '978-7-56-45678-1', '张红', '上海外语教育出版社', 3, 45.00, 55.00, 50, '/images/business.jpg', '商务英语口语实战训练', 1, 20);
+
+-- 物理类 (category_id=4)
+INSERT INTO tb_book (book_name, isbn, author, publisher, category_id, price, original_price, stock, cover_image, description, status, sales) VALUES
+('大学物理 上册', '978-7-04-78901-3', '张三慧', '高等教育出版社', 4, 45.00, 55.00, 60, '/images/physics1.jpg', '大学物理经典教材上册', 1, 18),
+('大学物理 下册', '978-7-04-89012-4', '张三慧', '高等教育出版社', 4, 45.00, 55.00, 50, '/images/physics2.jpg', '大学物理经典教材下册', 1, 15),
+('量子力学', '978-7-04-90123-5', '曾谨言', '高等教育出版社', 4, 55.00, 68.00, 25, '/images/quantum.jpg', '量子力学经典教材', 1, 8);
+
+-- 化学类 (category_id=5)
+INSERT INTO tb_book (book_name, isbn, author, publisher, category_id, price, original_price, stock, cover_image, description, status, sales) VALUES
+('有机化学', '978-7-04-01234-6', '邢其毅', '高等教育出版社', 5, 65.00, 78.00, 40, '/images/organic.jpg', '有机化学经典教材', 1, 12),
+('无机化学', '978-7-04-12345-7', '张祖德', '高等教育出版社', 5, 55.00, 68.00, 45, '/images/inorganic.jpg', '无机化学经典教材', 1, 10),
+('物理化学', '978-7-04-23456-8', '傅献彩', '高等教育出版社', 5, 58.00, 70.00, 30, '/images/chem.jpg', '物理化学经典教材', 1, 8);
+
+-- 经济学类 (category_id=6)
+INSERT INTO tb_book (book_name, isbn, author, publisher, category_id, price, original_price, stock, cover_image, description, status, sales) VALUES
+('经济学原理 微观分册', '978-7-30-34567-8', '曼昆', '北京大学出版社', 6, 68.00, 79.00, 55, '/images/micro.jpg', '经济学经典入门教材', 1, 30),
+('经济学原理 宏观分册', '978-7-30-45678-9', '曼昆', '北京大学出版社', 6, 68.00, 79.00, 50, '/images/macro.jpg', '经济学经典入门教材', 1, 28),
+('计量经济学', '978-7-30-56789-0', '古扎拉蒂', '北京大学出版社', 6, 72.00, 85.00, 25, '/images/econometrics.jpg', '计量经济学经典教材', 1, 10);
+
+-- 法学类 (category_id=8)
+INSERT INTO tb_book (book_name, isbn, author, publisher, category_id, price, original_price, stock, cover_image, description, status, sales) VALUES
+('民法总论', '978-7-30-67890-1', '梁慧星', '法律出版社', 8, 48.00, 58.00, 40, '/images/civil.jpg', '民法经典教材', 1, 12),
+('刑法学', '978-7-30-78901-2', '张明楷', '法律出版社', 8, 52.00, 62.00, 35, '/images/criminal.jpg', '刑法学经典教材', 1, 10),
+('法理学', '978-7-30-89012-3', '张文显', '法律出版社', 8, 42.00, 50.00, 30, '/images/jurisprudence.jpg', '法理学经典教材', 1, 8);
+
+-- 文学类 (category_id=9)
+INSERT INTO tb_book (book_name, isbn, author, publisher, category_id, price, original_price, stock, cover_image, description, status, sales) VALUES
+('中国文学史', '978-7-02-90123-4', '袁行霈', '人民文学出版社', 9, 88.00, 108.00, 30, '/images/literature.jpg', '中国文学史经典教材', 1, 15),
+('外国文学史', '978-7-02-01234-5', '郑克鲁', '人民文学出版社', 9, 75.00, 90.00, 25, '/images/foreignlit.jpg', '外国文学史经典教材', 1, 10);
+
+-- ============================================================
+-- 10.5 收货地址
+-- ============================================================
+INSERT INTO tb_address (user_id, receiver_name, receiver_phone, province, city, district, detail_address, is_default) VALUES
+
+-- testuser (user_id=1)
+(1, '张三', '13800138000', '江西省', '南昌市', '青山湖区', '江西财经大学南区12栋301', 1),
+(1, '张三', '13800138001', '江西省', '南昌市', '红谷滩区', '万达广场A座1203', 0),
+
+-- zhangsan (user_id=2)
+(2, '李四', '13800138002', '上海市', '上海市', '浦东新区', '张江高科技园区博霞路50号', 1),
+(2, '李四', '13800138003', '浙江省', '杭州市', '西湖区', '文三路100号A座801', 0),
+
+-- lisi (user_id=3)
+(3, '王五', '13800138004', '广东省', '广州市', '天河区', '天河路200号财富广场1506', 1),
+(3, '王五', '13800138005', '广东省', '深圳市', '南山区', '科技园南区科苑路15号', 0),
+
+-- wangwu (user_id=4)
+(4, '赵六', '13800138006', '四川省', '成都市', '武侯区', '天府大道北段1700号环球中心', 1),
+
+-- zhaoliu (user_id=5)
+(5, '孙七', '13800138007', '湖北省', '武汉市', '洪山区', '珞喻路1037号华中科技大学', 1),
+
+-- testuser2 (user_id=7)
+(7, '周八', '13800138008', '北京市', '北京市', '海淀区', '中关村大街18号B座502', 1);
+
+-- ============================================================
+-- 10.6 购物车数据
+-- ============================================================
+INSERT INTO tb_cart (user_id, book_id, quantity) VALUES
+(1, 1, 2),
+(1, 3, 1),
+(1, 5, 1),
+(2, 2, 1),
+(2, 4, 3),
+(3, 6, 1),
+(3, 8, 2),
+(4, 10, 1),
+(4, 12, 1),
+(5, 14, 2),
+(7, 1, 1),
+(7, 7, 1);
+
+-- ============================================================
+-- 10.7 订单数据 (使用存储过程批量生成)
+-- ============================================================
+
+-- 删除已存在的存储过程
+DROP PROCEDURE IF EXISTS generate_test_orders;
+
+DELIMITER //
+
+CREATE PROCEDURE generate_test_orders()
+BEGIN
+    DECLARE i INT DEFAULT 1;
+    DECLARE v_order_id VARCHAR(64);
+    DECLARE v_user_id BIGINT;
+    DECLARE v_total DECIMAL(10,2);
+    DECLARE v_status TINYINT;
+    DECLARE v_days_ago INT;
+    DECLARE v_book_count INT;
+    DECLARE v_j INT;
+    DECLARE v_book_id BIGINT;
+    DECLARE v_quantity INT;
+    DECLARE v_price DECIMAL(10,2);
+    DECLARE v_item_total DECIMAL(10,2);
+    DECLARE v_order_total DECIMAL(10,2);
+
+    WHILE i <= 30 DO
+        -- 随机用户 (1-7)
+        SET v_user_id = FLOOR(1 + RAND() * 7);
+        -- 随机状态 (0-3)
+        SET v_status = FLOOR(RAND() * 4);
+        -- 随机天数 (1-90天前)
+        SET v_days_ago = FLOOR(1 + RAND() * 90);
+
+        -- 生成订单号
+        SET v_order_id = CONCAT(
+            DATE_FORMAT(DATE_SUB(NOW(), INTERVAL v_days_ago DAY), '%Y%m%d'),
+            LPAD(FLOOR(1 + RAND() * 9999), 4, '0'),
+            SUBSTRING(MD5(RAND()), 1, 4)
+        );
+
+        -- 随机收货地址信息
+        SET @addr_name = CONCAT('收货人', v_user_id);
+        SET @addr_phone = CONCAT('138', LPAD(FLOOR(100000000 + RAND() * 900000000), 9, '0'));
+        SET @addr_detail = CONCAT('测试地址', FLOOR(1 + RAND() * 999));
+
+        -- 初始化订单总金额
+        SET v_order_total = 0;
+
+        -- 插入订单
+        INSERT INTO tb_order (
+            order_id, user_id, total_amount, shipping_fee, order_status, pay_type,
+            receiver_name, receiver_phone, receiver_address, remark,
+            pay_time, deliver_time, receive_time, create_time
+        ) VALUES (
+            v_order_id,
+            v_user_id,
+            0,  -- 先插入0，后面更新
+            0.00,
+            v_status,
+            0,
+            @addr_name,
+            @addr_phone,
+            @addr_detail,
+            CONCAT('订单备注', i),
+            CASE WHEN v_status > 0 THEN DATE_SUB(NOW(), INTERVAL v_days_ago DAY) ELSE NULL END,
+            CASE WHEN v_status > 1 THEN DATE_SUB(NOW(), INTERVAL (v_days_ago - 1) DAY) ELSE NULL END,
+            CASE WHEN v_status > 2 THEN DATE_SUB(NOW(), INTERVAL (v_days_ago - 2) DAY) ELSE NULL END,
+            DATE_SUB(NOW(), INTERVAL v_days_ago DAY)
+        );
+
+        -- 随机订单详情 (1-3本书)
+        SET v_book_count = FLOOR(1 + RAND() * 3);
+        SET v_j = 1;
+
+        WHILE v_j <= v_book_count DO
+            SET v_book_id = FLOOR(1 + RAND() * 30);
+            SET v_quantity = FLOOR(1 + RAND() * 3);
+            SET v_price = ROUND(30 + RAND() * 80, 2);
+            SET v_item_total = v_price * v_quantity;
+            SET v_order_total = v_order_total + v_item_total;
+
+            INSERT INTO tb_order_item (
+                order_id, book_id, book_name, book_cover, price, quantity, total_price
+            )
+            SELECT
+                v_order_id,
+                book_id,
+                book_name,
+                cover_image,
+                v_price,
+                v_quantity,
+                v_item_total
+            FROM tb_book
+            WHERE book_id = v_book_id
+            LIMIT 1;
+
+            SET v_j = v_j + 1;
+        END WHILE;
+
+        -- 更新订单总金额（修复：使用 v_order_id 变量）
+        UPDATE tb_order SET total_amount = v_order_total WHERE order_id = v_order_id;
+
+        SET i = i + 1;
+    END WHILE;
+END //
+
+DELIMITER ;
+
+-- 执行存储过程生成订单
+CALL generate_test_orders();
+
+-- 删除存储过程（执行完后清理）
+DROP PROCEDURE IF EXISTS generate_test_orders;
+
+-- ============================================================
+-- 10.8 评价数据
+-- ============================================================
+INSERT INTO tb_review (user_id, book_id, order_id, rating, content) VALUES
+(1, 1, (SELECT order_id FROM tb_order WHERE user_id = 1 LIMIT 1), 5, '这本书太好了，讲得非常详细，强烈推荐！'),
+(1, 2, (SELECT order_id FROM tb_order WHERE user_id = 1 LIMIT 1), 4, '数学经典教材，内容全面，但有点难'),
+(2, 3, (SELECT order_id FROM tb_order WHERE user_id = 2 LIMIT 1), 5, '英语学习必备，很好用'),
+(3, 1, (SELECT order_id FROM tb_order WHERE user_id = 3 LIMIT 1), 4, 'Java入门经典，值得一看'),
+(4, 4, (SELECT order_id FROM tb_order WHERE user_id = 4 LIMIT 1), 3, '网络知识讲得不错，但有些章节太旧了'),
+(1, 5, (SELECT order_id FROM tb_order WHERE user_id = 1 LIMIT 1 OFFSET 1), 5, '操作系统必读，强烈推荐'),
+(2, 6, (SELECT order_id FROM tb_order WHERE user_id = 2 LIMIT 1 OFFSET 1), 4, '线性代数讲得很清晰'),
+(3, 7, (SELECT order_id FROM tb_order WHERE user_id = 3 LIMIT 1 OFFSET 1), 5, '概率统计经典，考研必备');
+
+-- ============================================================
+-- ============================================================
+-- 11. 数据验证查询
+-- ============================================================
+-- ============================================================
+
+-- 查看所有用户
+SELECT user_id, username, phone, email, balance,
+       CASE status WHEN 1 THEN '正常' ELSE '禁用' END AS status_name
+FROM tb_user;
+
+-- 查看各分类教材数量
+SELECT c.category_name, COUNT(b.book_id) AS book_count
+FROM tb_category c
+LEFT JOIN tb_book b ON c.category_id = b.category_id AND b.status = 1
+GROUP BY c.category_id
+ORDER BY book_count DESC;
+
+-- 查看销量排行前10
+SELECT book_id, book_name, author, price, sales, stock
+FROM tb_book
+WHERE status = 1
+ORDER BY sales DESC
+LIMIT 10;
+
+-- 查看订单统计
+SELECT
+    COUNT(*) AS total_orders,
+    ROUND(SUM(total_amount), 2) AS total_amount,
+    ROUND(AVG(total_amount), 2) AS avg_amount,
+    ROUND(MAX(total_amount), 2) AS max_amount,
+    ROUND(MIN(total_amount), 2) AS min_amount
+FROM tb_order;
+
+-- 查看各状态订单数量
+SELECT
+    order_status,
+    CASE order_status
+        WHEN 0 THEN '待付款'
+        WHEN 1 THEN '待发货'
+        WHEN 2 THEN '待收货'
+        WHEN 3 THEN '已完成'
+        WHEN 4 THEN '已取消'
+    END AS status_name,
+    COUNT(*) AS count
+FROM tb_order
+GROUP BY order_status
+ORDER BY order_status;
+
+-- 查看购物车
+SELECT u.username, b.book_name, c.quantity
+FROM tb_cart c
+JOIN tb_user u ON c.user_id = u.user_id
+JOIN tb_book b ON c.book_id = b.book_id
+ORDER BY u.user_id;
+
+-- 查看评价
+SELECT u.username, b.book_name, r.rating, r.content
+FROM tb_review r
+JOIN tb_user u ON r.user_id = u.user_id
+JOIN tb_book b ON r.book_id = b.book_id
+LIMIT 10;
+
+-- ============================================================
+-- ============================================================
+-- 12. 清理数据（如需重置，取消注释执行）
+-- ============================================================
+-- ============================================================
+
+/*
+SET FOREIGN_KEY_CHECKS = 0;
+TRUNCATE tb_order_item;
+TRUNCATE tb_order;
+TRUNCATE tb_review;
+TRUNCATE tb_cart;
+TRUNCATE tb_address;
+TRUNCATE tb_book;
+TRUNCATE tb_category;
+TRUNCATE tb_user;
+TRUNCATE tb_admin;
+SET FOREIGN_KEY_CHECKS = 1;
+*/
+
+-- ============================================================
+-- 13. 测试账号汇总
+-- ============================================================
+--
+-- | 角色     | 用户名    | 密码     | 余额   | 状态 |
+-- |----------|-----------|----------|--------|------|
+-- | 管理员   | admin     | admin123 | -      | 正常 |
+-- | 用户     | testuser  | 123456   | 100.00 | 正常 |
+-- | 用户     | zhangsan  | 123456   | 200.00 | 正常 |
+-- | 用户     | lisi      | 123456   | 150.00 | 正常 |
+-- | 用户     | wangwu    | 123456   | 80.00  | 正常 |
+-- | 用户     | zhaoliu   | 123456   | 300.00 | 正常 |
+-- | 用户     | sunqi     | 123456   | 50.00  | 禁用 |
+-- | 用户     | testuser2 | 123456   | 500.00 | 正常 |
+--
+-- ============================================================
+
+
+UPDATE tb_user SET balance = 500.00 WHERE username = 'testuser';
+
+select * from tb_book;
+
+USE book_mall;
+DESC tb_admin;
+
+USE book_mall;
+
+ALTER TABLE tb_admin
+    ADD COLUMN real_name       VARCHAR(50)  DEFAULT NULL COMMENT '真实姓名'   AFTER status,
+    ADD COLUMN phone           VARCHAR(20)  DEFAULT NULL COMMENT '手机号'     AFTER real_name,
+    ADD COLUMN email           VARCHAR(100) DEFAULT NULL COMMENT '邮箱'       AFTER phone,
+    ADD COLUMN avatar          VARCHAR(255) DEFAULT NULL COMMENT '头像'       AFTER email,
+    ADD COLUMN last_login_ip   VARCHAR(50)  DEFAULT NULL COMMENT '最后登录IP' AFTER avatar,
+    ADD COLUMN last_login_time DATETIME     DEFAULT NULL COMMENT '最后登录时间' AFTER last_login_ip,
+    ADD COLUMN update_time     DATETIME     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间' AFTER create_time;
+
+    USE book_mall;
+
+-- 直接更新余额
+UPDATE tb_user SET balance = 500.00 WHERE username = 'sunqi';
+
+-- 验证
+SELECT user_id, username, balance FROM tb_user WHERE username = 'sunqi';
+
+
+
+
+   USE book_mall;
+
+INSERT INTO tb_address
+(user_id, receiver_name, receiver_phone, province, city, district, detail_address, is_default)
+VALUES
+(6, '孙七', '13800138009', '江苏省', '南京市', '鼓楼区', '南京大学鼓楼校区南园8舍301', 1),
+(6, '孙七', '13800138010', '江苏省', '苏州市', '姑苏区', '苏州大学本部敬文书院', 0);
+
+
+USE book_mall;
+
+-- ============================================================
+--   7 个空分类各补 5 本教材
+-- ============================================================
+
+-- 管理学 (category_id = 7) —— 5本
+INSERT INTO tb_book (book_name, isbn, author, publisher, category_id, price, original_price, stock, cover_image, description, status, sales) VALUES
+('管理学原理', '978-7-30-11101-1', '斯蒂芬·罗宾斯', '中国人民大学出版社', 7, 68.00, 82.00, 50, '/images/management1.jpg', '管理学经典入门教材', 1, 20),
+('组织行为学', '978-7-30-11102-2', '斯蒂芬·罗宾斯', '中国人民大学出版社', 7, 72.00, 88.00, 40, '/images/management2.jpg', '组织行为学经典教材', 1, 15),
+('市场营销学', '978-7-30-11103-3', '菲利普·科特勒', '中国人民大学出版社', 7, 78.00, 95.00, 45, '/images/management3.jpg', '市场营销经典教材', 1, 25),
+('人力资源管理', '978-7-30-11104-4', '加里·德斯勒', '中国人民大学出版社', 7, 75.00, 92.00, 35, '/images/management4.jpg', '人力资源管理经典教材', 1, 18),
+('战略管理', '978-7-30-11105-5', '迈克尔·波特', '华夏出版社', 7, 82.00, 99.00, 30, '/images/management5.jpg', '战略管理经典教材', 1, 12);
+
+-- 历史学 (category_id = 10) —— 5本
+INSERT INTO tb_book (book_name, isbn, author, publisher, category_id, price, original_price, stock, cover_image, description, status, sales) VALUES
+('中国通史', '978-7-10-22201-1', '吕思勉', '中华书局', 10, 88.00, 108.00, 40, '/images/history1.jpg', '中国通史经典著作', 1, 20),
+('世界史', '978-7-10-22202-2', '斯塔夫里阿诺斯', '北京大学出版社', 10, 98.00, 120.00, 35, '/images/history2.jpg', '全球通史经典教材', 1, 18),
+('史记', '978-7-10-22203-3', '司马迁', '中华书局', 10, 128.00, 158.00, 25, '/images/history3.jpg', '中国史学经典著作', 1, 15),
+('明朝那些事儿', '978-7-10-22204-4', '当年明月', '浙江人民出版社', 10, 55.00, 68.00, 60, '/images/history4.jpg', '通俗历史读物', 1, 30),
+('全球通史', '978-7-10-22205-5', '斯塔夫里阿诺斯', '上海社会科学院出版社', 10, 108.00, 128.00, 30, '/images/history5.jpg', '世界史经典教材', 1, 12);
+
+-- 哲学 (category_id = 11) —— 5本
+INSERT INTO tb_book (book_name, isbn, author, publisher, category_id, price, original_price, stock, cover_image, description, status, sales) VALUES
+('西方哲学史', '978-7-20-33301-1', '罗素', '商务印书馆', 11, 78.00, 95.00, 40, '/images/philosophy1.jpg', '西方哲学史经典著作', 1, 18),
+('中国哲学简史', '978-7-20-33302-2', '冯友兰', '北京大学出版社', 11, 68.00, 82.00, 45, '/images/philosophy2.jpg', '中国哲学经典教材', 1, 22),
+('苏菲的世界', '978-7-20-33303-3', '乔斯坦·贾德', '作家出版社', 11, 45.00, 55.00, 60, '/images/philosophy3.jpg', '哲学入门经典读物', 1, 35),
+('理想国', '978-7-20-33304-4', '柏拉图', '商务印书馆', 11, 58.00, 72.00, 30, '/images/philosophy4.jpg', '西方哲学经典著作', 1, 15),
+('论语', '978-7-20-33305-5', '孔子', '中华书局', 11, 38.00, 46.00, 50, '/images/philosophy5.jpg', '中国儒家经典著作', 1, 28);
+
+-- 医学 (category_id = 12) —— 5本
+INSERT INTO tb_book (book_name, isbn, author, publisher, category_id, price, original_price, stock, cover_image, description, status, sales) VALUES
+('人体解剖学', '978-7-40-44401-1', '柏树令', '人民卫生出版社', 12, 98.00, 118.00, 40, '/images/medical1.jpg', '医学基础经典教材', 1, 15),
+('生理学', '978-7-40-44402-2', '王庭槐', '人民卫生出版社', 12, 88.00, 105.00, 45, '/images/medical2.jpg', '医学基础经典教材', 1, 18),
+('病理学', '978-7-40-44403-3', '步宏', '人民卫生出版社', 12, 92.00, 110.00, 35, '/images/medical3.jpg', '医学基础经典教材', 1, 12),
+('内科学', '978-7-40-44404-4', '葛均波', '人民卫生出版社', 12, 128.00, 152.00, 30, '/images/medical4.jpg', '临床医学经典教材', 1, 10),
+('外科学', '978-7-40-44405-5', '陈孝平', '人民卫生出版社', 12, 138.00, 165.00, 25, '/images/medical5.jpg', '临床医学经典教材', 1, 8);
+
+-- 艺术 (category_id = 13) —— 5本
+INSERT INTO tb_book (book_name, isbn, author, publisher, category_id, price, original_price, stock, cover_image, description, status, sales) VALUES
+('艺术概论', '978-7-50-55501-1', '彭吉象', '北京大学出版社', 13, 58.00, 72.00, 50, '/images/art1.jpg', '艺术学基础教材', 1, 20),
+('中国美术史', '978-7-50-55502-2', '洪再新', '中国美术学院出版社', 13, 88.00, 105.00, 35, '/images/art2.jpg', '中国美术史经典教材', 1, 15),
+('西方美术史', '978-7-50-55503-3', '贡布里希', '广西美术出版社', 13, 98.00, 118.00, 30, '/images/art3.jpg', '西方美术史经典著作', 1, 12),
+('音乐鉴赏', '978-7-50-55504-4', '王耀华', '高等教育出版社', 13, 45.00, 55.00, 60, '/images/art4.jpg', '音乐鉴赏经典教材', 1, 25),
+('设计美学', '978-7-50-55505-5', '李砚祖', '清华大学出版社', 13, 68.00, 82.00, 40, '/images/art5.jpg', '设计美学经典教材', 1, 18);
+
+-- 教育 (category_id = 14) —— 5本
+INSERT INTO tb_book (book_name, isbn, author, publisher, category_id, price, original_price, stock, cover_image, description, status, sales) VALUES
+('教育学原理', '978-7-60-66601-1', '叶澜', '人民教育出版社', 14, 58.00, 72.00, 50, '/images/education1.jpg', '教育学基础经典教材', 1, 22),
+('教育心理学', '978-7-60-66602-2', '陈琦', '高等教育出版社', 14, 65.00, 78.00, 45, '/images/education2.jpg', '教育心理学经典教材', 1, 18),
+('中国教育史', '978-7-60-66603-3', '孙培青', '华东师范大学出版社', 14, 72.00, 88.00, 35, '/images/education3.jpg', '教育史经典教材', 1, 15),
+('课程与教学论', '978-7-60-66604-4', '王本陆', '高等教育出版社', 14, 55.00, 68.00, 40, '/images/education4.jpg', '课程与教学论经典教材', 1, 20),
+('教育研究方法', '978-7-60-66605-5', '袁振国', '高等教育出版社', 14, 62.00, 75.00, 38, '/images/education5.jpg', '教育研究方法经典教材', 1, 12);
+
+-- 心理学 (category_id = 15) —— 5本
+INSERT INTO tb_book (book_name, isbn, author, publisher, category_id, price, original_price, stock, cover_image, description, status, sales) VALUES
+('普通心理学', '978-7-70-77701-1', '彭聃龄', '北京师范大学出版社', 15, 78.00, 95.00, 45, '/images/psychology1.jpg', '心理学基础经典教材', 1, 25),
+('发展心理学', '978-7-70-77702-2', '林崇德', '人民教育出版社', 15, 72.00, 88.00, 40, '/images/psychology2.jpg', '发展心理学经典教材', 1, 20),
+('社会心理学', '978-7-70-77703-3', '戴维·迈尔斯', '人民邮电出版社', 15, 88.00, 105.00, 35, '/images/psychology3.jpg', '社会心理学经典教材', 1, 18),
+('认知心理学', '978-7-70-77704-4', '王甦', '北京大学出版社', 15, 68.00, 82.00, 30, '/images/psychology4.jpg', '认知心理学经典教材', 1, 15),
+('心理咨询与治疗', '978-7-70-77705-5', '钱铭怡', '北京大学出版社', 15, 75.00, 90.00, 28, '/images/psychology5.jpg', '心理咨询经典教材', 1, 12);
