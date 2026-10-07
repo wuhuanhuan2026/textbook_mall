@@ -1,4 +1,4 @@
-# Gateway网关模块配置
+﻿# Gateway网关模块配置
 server:
   port: 8090
 
@@ -152,7 +152,7 @@ logging:
 
 # ========== JWT配置 ==========
 jwt:
-  secret: book-mall-jwt-secret-key-2024-secure
+  secret: ${JWT_SECRET:CHANGE_TO_A_LONG_RANDOM_VALUE}
   expiration: 604800000
 
 # ========== 白名单路径（无需认证） ==========

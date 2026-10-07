@@ -85,3 +85,5 @@ application-local.properties
 *.war
 *.ear
 *.class
+backend/_backup-config/
+backend/META-INF/

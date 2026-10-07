@@ -1,4 +1,4 @@
-# Common模块公共配置
+﻿# Common模块公共配置
 # 此文件会被各微服务引用，提供通用配置
 
 spring:
@@ -24,7 +24,7 @@ spring:
 
 # JWT配置
 jwt:
-  secret: book-mall-jwt-secret-key-2024-secure
+  secret: ${JWT_SECRET:CHANGE_TO_A_LONG_RANDOM_VALUE}
   expiration: 604800000  # 7天（毫秒）
 
 # 密码加密配置

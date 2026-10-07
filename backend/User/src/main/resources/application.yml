@@ -1,4 +1,4 @@
-# User模块配置
+﻿# User模块配置
 server:
   port: 8081
 
@@ -33,7 +33,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/book_mall?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
     username: root
-    password: 123456
+    password: ${DB_PASSWORD:CHANGE_ME}
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
       initial-size: 5
@@ -45,7 +45,7 @@ spring:
         enabled: true
         url-pattern: /druid/*
         login-username: admin
-        login-password: admin
+        login-password: ${DRUID_LOGIN_PASSWORD:CHANGE_ME}
 
   # ========== Redis配置 ==========
   redis:
@@ -79,7 +79,7 @@ logging:
 
 # ========== JWT配置 ==========
 jwt:
-  secret: book-mall-jwt-secret-key-2024-secure
+  secret: ${JWT_SECRET:CHANGE_TO_A_LONG_RANDOM_VALUE}
   expiration: 604800000
 
 # ========== MyBatis-Plus配置 ==========
