@@ -41,21 +41,27 @@
     </div>
 
     <!-- 结果统计 -->
-    <div class="result-stats" v-if="total > 0">
+    <div class="result-stats" v-if="total > 0 && !loading && !error">
       共找到 <strong>{{ total }}</strong> 本教材
     </div>
 
-    <!-- 教材列表 -->
-    <el-row :gutter="20" v-loading="loading">
+    <!-- 状态分支 -->
+    <LoadingState v-if="loading" />
+    <ErrorState v-else-if="error" :message="error" @retry="fetchBooks" />
+    <EmptyState
+      v-else-if="bookList.length === 0"
+      :message="searchKeyword ? '未找到匹配的教材' : '暂无教材数据'"
+      :action-text="searchKeyword ? '清空筛选' : ''"
+      @action="resetQuery"
+    />
+    <el-row v-else :gutter="20">
       <el-col :span="6" v-for="book in bookList" :key="book.bookId">
         <BookCard :book="book" @click="goToDetail(book.bookId)" />
       </el-col>
     </el-row>
 
-    <el-empty v-if="!loading && bookList.length === 0" description="暂无教材" />
-
     <!-- ✅ 修复分页：使用 current-page + jumper -->
-    <div class="pagination-wrapper" v-if="total > 0">
+    <div class="pagination-wrapper" v-if="total > 0 && !loading && !error">
       <el-pagination
         v-model:current-page="pageNum"
         v-model:page-size="pageSize"
@@ -72,14 +78,17 @@
 <script setup>
 import { ref, reactive, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { bookApi } from '@/api/book'
-import { categoryApi } from '@/api/category'
+import { listBooks, listCategories } from '@/api/book'
 import BookCard from '@/components/BookCard.vue'
+import LoadingState from '@/components/LoadingState.vue'
+import EmptyState from '@/components/EmptyState.vue'
+import ErrorState from '@/components/ErrorState.vue'
 
 const route = useRoute()
 const router = useRouter()
 
 const loading = ref(false)
+const error = ref('')
 const bookList = ref([])
 const categories = ref([])
 const total = ref(0)
@@ -94,7 +103,7 @@ const filters = reactive({
 
 const fetchCategories = async () => {
   try {
-    const res = await categoryApi.getCategories()
+    const res = await listCategories()
     if (Array.isArray(res)) {
       categories.value = res
     } else if (res && res.code === 200 && Array.isArray(res.data)) {
@@ -110,6 +119,7 @@ const fetchCategories = async () => {
 
 const fetchBooks = async () => {
   loading.value = true
+  error.value = ''
   try {
     const params = {
       pageNum: pageNum.value,
@@ -117,22 +127,13 @@ const fetchBooks = async () => {
     }
     if (searchKeyword.value) params.keyword = searchKeyword.value
     if (filters.categoryId) params.categoryId = filters.categoryId
-    if (filters.sortBy && filters.sortBy !== 'default') params.sortBy = filters.sortBy
 
-    const result = await bookApi.getBookList(params)
-    if (result && result.code === 200) {
-      const data = result.data || {}
-      bookList.value = data.list || []
-      total.value = data.total || 0
-    } else if (result && result.list !== undefined) {
-      bookList.value = result.list || []
-      total.value = result.total || 0
-    } else {
-      bookList.value = []
-      total.value = 0
-    }
+    const data = await listBooks(params)
+    bookList.value = data.records || []
+    total.value = data.total || 0
   } catch (error) {
     console.error('获取教材列表失败:', error)
+    error.value = error.message || '加载失败'
     bookList.value = []
     total.value = 0
   } finally {
@@ -159,6 +160,14 @@ const handleSearch = () => {
 }
 
 const handleFilter = () => {
+  pageNum.value = 1
+  fetchBooks()
+}
+
+const resetQuery = () => {
+  searchKeyword.value = ''
+  filters.categoryId = null
+  filters.sortBy = 'default'
   pageNum.value = 1
   fetchBooks()
 }

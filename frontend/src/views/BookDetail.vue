@@ -59,10 +59,11 @@
             <el-button 
               type="primary" 
               size="large" 
-              :disabled="book.stock === 0"
+              :disabled="!canPurchase || submitting"
+              :loading="submitting"
               @click="handleAddToCart"
             >
-              {{ book.stock === 0 ? '已售罄' : '加入购物车' }}
+              {{ submitting ? '提交中...' : (canPurchase ? '加入购物车' : disabledReason) }}
             </el-button>
           </div>
 
@@ -124,7 +125,8 @@ import { ElMessage } from 'element-plus'
 import { useBookStore } from '@/stores/book'
 import { useCartStore } from '@/stores/cart'
 import { useUserStore } from '@/stores/user'
-import { reviewApi } from '@/api/review'
+// ✅ 实训11：注释掉 reviewApi，改用 Mock 评价
+// import { reviewApi } from '@/api/review'
 
 const route = useRoute()
 const router = useRouter()
@@ -138,6 +140,19 @@ const reviewPage = ref(1)
 const reviewTotal = ref(0)
 const loading = ref(false)
 const book = ref(null)
+
+// ============ 实训11 新增：按钮状态与防重复提交 ============
+const submitting = ref(false)
+
+const disabledReason = computed(() => {
+  if (!userStore.isLoggedIn) return '请先登录'
+  if (book.value?.status !== 'PUBLISHED') return '教材未上架'
+  if (book.value?.stock <= 0) return '库存不足'
+  return ''
+})
+
+const canPurchase = computed(() => !disabledReason.value)
+// ========================================================
 
 // 安全格式化价格
 const formatPrice = (value) => {
@@ -193,34 +208,38 @@ const fetchBookDetail = async () => {
   }
 }
 
+/**
+ * ✅ 实训11：改用 Mock 评价数据，不依赖后端
+ */
 const fetchReviews = async (append = false) => {
   if (!book.value) return
   try {
-    const res = await reviewApi.getBookReviews(book.value.bookId, { 
-      pageNum: reviewPage.value, 
-      pageSize: 10 
-    })
-    
-    let list = []
-    let total = 0
-    
-    if (res && res.code === 200) {
-      list = res.data?.list || []
-      total = res.data?.total || 0
-    } else if (res && res.list !== undefined) {
-      list = res.list || []
-      total = res.total || 0
-    } else if (Array.isArray(res)) {
-      list = res
-      total = res.length
-    }
-    
+    // 模拟延迟
+    await new Promise(resolve => setTimeout(resolve, 300))
+
+    const mockReviews = [
+      {
+        reviewId: 1,
+        username: '张三',
+        rating: 5,
+        content: '这本书讲得非常详细，强烈推荐！',
+        createTime: '2026-09-15 10:00:00'
+      },
+      {
+        reviewId: 2,
+        username: '李四',
+        rating: 4,
+        content: '内容很全面，适合入门。',
+        createTime: '2026-09-18 14:30:00'
+      }
+    ]
+
     if (append) {
-      reviews.value = [...reviews.value, ...list]
+      reviews.value = [...reviews.value, ...mockReviews]
     } else {
-      reviews.value = list
+      reviews.value = mockReviews
     }
-    reviewTotal.value = total
+    reviewTotal.value = mockReviews.length
   } catch (error) {
     console.error('获取评价失败:', error)
     if (!append) reviews.value = []
@@ -235,6 +254,7 @@ const loadMoreReviews = () => {
 /**
  * ✅ 加入购物车（唯一提示源）
  * Store 层不弹提示，只负责数据操作
+ * 实训11：加 canPurchase 判断 + 防重复提交
  */
 const handleAddToCart = async () => {
   if (!userStore.isLoggedIn) {
@@ -242,17 +262,23 @@ const handleAddToCart = async () => {
     router.push('/login')
     return
   }
-  
   if (!book.value) {
     ElMessage.error('教材信息不存在')
     return
   }
-  
+  if (!canPurchase.value) {
+    ElMessage.warning(disabledReason.value)
+    return
+  }
+  if (submitting.value) return
+  submitting.value = true
   try {
     await cartStore.addToCart(book.value.bookId, quantity.value)
     ElMessage.success('已加入购物车')  // ✅ 唯一提示源
   } catch (error) {
     ElMessage.error(error.message || '加入购物车失败')
+  } finally {
+    submitting.value = false
   }
 }
 
