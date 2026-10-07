@@ -9,9 +9,13 @@ import java.math.BigDecimal;
 /**
  * 教材服务 Feign 客户端
  *
+ * 说明：
+ * - 直连 book-service，路径以 BookController 的 @RequestMapping("/books") 为准
+ * - 不走网关，因此不带 /api 前缀（/api 仅为网关对外统一入口）
+ *
  * @author BookMall Team
  */
-@FeignClient(name = "book-service", path = "/api/books")  // ✅ 改为 /api/books
+@FeignClient(name = "book-service", path = "/books")
 public interface BookFeignClient {
 
     @GetMapping("/{bookId}")

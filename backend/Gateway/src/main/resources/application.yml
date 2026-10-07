@@ -167,9 +167,11 @@ auth:
     - /api/user/check-username
 
     # ===== 用户内部调用（不需要Token） =====
-    - /api/user/exists/**
-    - /api/user/info/**
-    - /api/user/balance/**
+    # 注意：只放行 /api/user/info/{userId}（内部调用），
+    #       不放行 /api/user/info（获取当前登录用户，必须登录）
+    - /api/user/exists/*
+    - /api/user/info/*
+    - /api/user/balance/*
 
     # ===== 管理员登录 =====
     - /api/admin/login
