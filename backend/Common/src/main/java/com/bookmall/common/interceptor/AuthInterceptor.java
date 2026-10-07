@@ -107,6 +107,14 @@ public class AuthInterceptor implements HandlerInterceptor {
     private static final String BOOK_DYNAMIC_PATH_REGEX =
             "^(/api)?/books/\\d+/(stock|on-sale|price)$";
 
+    /**
+     * ✅ 实训11 新增：图书详情接口白名单
+     * 匹配：/books/1、/api/books/1
+     * 说明：详情页是公开接口，未登录也能浏览
+     */
+    private static final String BOOK_DETAIL_PATH_REGEX =
+            "^(/api)?/books/\\d+$";
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         String path = request.getRequestURI();
@@ -175,6 +183,12 @@ public class AuthInterceptor implements HandlerInterceptor {
         // 3. 正则匹配：/books/{id}/stock、/books/{id}/on-sale、/books/{id}/price
         //    同时兼容 /api/books/{id}/... 形式
         if (path.matches(BOOK_DYNAMIC_PATH_REGEX)) {
+            return true;
+        }
+
+        // 4. ✅ 实训11 新增：/books/{id} 详情页白名单
+        //    同时兼容 /books/1 和 /api/books/1 形式
+        if (path.matches(BOOK_DETAIL_PATH_REGEX)) {
             return true;
         }
 
