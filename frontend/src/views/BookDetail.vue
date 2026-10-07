@@ -144,9 +144,16 @@ const book = ref(null)
 // ============ 实训11 新增：按钮状态与防重复提交 ============
 const submitting = ref(false)
 
+/**
+ * ✅ 实训15 修复：后端 status 是数字 1，不是字符串 'PUBLISHED'
+ * 1 = 上架，0 = 下架
+ * 兼容数字和字符串两种写法
+ */
 const disabledReason = computed(() => {
   if (!userStore.isLoggedIn) return '请先登录'
-  if (book.value?.status !== 'PUBLISHED') return '教材未上架'
+  const status = book.value?.status
+  const isOnSale = status === 1 || status === 'PUBLISHED'
+  if (!isOnSale) return '教材未上架'
   if (book.value?.stock <= 0) return '库存不足'
   return ''
 })

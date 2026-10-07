@@ -1,6 +1,4 @@
 import request from './request'
-import { books, categories } from '@/mocks/books'
-import { mockRequest, paginate } from '@/mocks/mockApi'
 
 /**
  * 教材相关 API
@@ -57,84 +55,84 @@ export const bookApi = {
   }
 }
 
-// ============ 实训11 新增：Mock 接口（不依赖后端） ============
+// ============ 实训15：Mock 接口全部替换为真实接口 ============
 
 /**
- * 获取教材列表（分页，Mock）
- * @param {Object} params - { pageNum, pageSize, keyword, status, categoryId }
+ * 获取教材列表（分页，真实接口）
+ * 适配 Books.vue 中 `const data = await listBooks(params)` 的调用方式
+ * 返回：{ records, total, pageNum, pageSize }
  */
 export async function listBooks(params = {}) {
-  return mockRequest(() => {
-    const keyword = params.keyword?.trim() || ''
-    const status = params.status || ''
-    const categoryId = params.categoryId || null
-
-    const records = books.filter(item => {
-      if (keyword && !item.bookName.includes(keyword) && !item.author.includes(keyword)) {
-        return false
-      }
-      if (status && item.status !== status) return false
-      if (categoryId && item.categoryId !== Number(categoryId)) return false
-      return true
-    })
-
-    return paginate(records, params.pageNum || 1, params.pageSize || 8)
-  }, { delay: 500 })
+  const res = await request.get('/books', { params })
+  if (res && res.code === 200 && res.data) {
+    return {
+      records: res.data.list || [],
+      total: res.data.total || 0,
+      pageNum: res.data.pageNum,
+      pageSize: res.data.pageSize
+    }
+  }
+  throw new Error(res?.message || '获取教材列表失败')
 }
 
 /**
- * 获取教材详情（Mock）
+ * 获取教材详情（真实接口）
+ * 返回单个 book 对象，与实训11 的 Mock 保持一致
  */
 export async function getBook(id) {
-  return mockRequest(() => {
-    return books.find(item => item.bookId === Number(id)) || null
-  }, { delay: 500 })
+  const res = await request.get(`/books/${id}`)
+  if (res && res.code === 200) {
+    return res.data || null
+  }
+  throw new Error(res?.message || '获取教材详情失败')
 }
 
 /**
- * 新增教材（Mock）
+ * 新增教材（真实接口）
+ * 管理端可调用，实训15 暂不重点验证
  */
 export async function createBook(data) {
-  return mockRequest(() => {
-    const newBook = {
-      bookId: books.length + 1,
-      ...data,
-      sales: 0
-    }
-    books.push(newBook)
-    return newBook
-  }, { delay: 500 })
+  const res = await request.post('/books', data)
+  if (res && res.code === 200) {
+    return res.data
+  }
+  throw new Error(res?.message || '新增教材失败')
 }
 
 /**
- * 修改教材（Mock）
+ * 修改教材（真实接口）
  */
 export async function updateBook(id, data) {
-  return mockRequest(() => {
-    const book = books.find(item => item.bookId === Number(id))
-    if (!book) throw new Error('教材不存在')
-    Object.assign(book, data)
-    return book
-  }, { delay: 500 })
+  const res = await request.put(`/books/${id}`, data)
+  if (res && res.code === 200) {
+    return res.data
+  }
+  throw new Error(res?.message || '修改教材失败')
 }
 
 /**
- * 购买教材（Mock）
+ * 购买教材（真实接口）
+ * 实训15 用加入购物车替代，此函数保留兼容
  */
 export async function purchaseBook(id) {
-  return mockRequest(() => {
-    const book = books.find(item => item.bookId === Number(id))
-    if (!book) throw new Error('教材不存在')
-    if (book.stock <= 0) throw new Error('库存不足')
-    book.stock -= 1
-    book.sales += 1
-    return book
-  }, { delay: 500 })
+  const res = await request.post(`/books/${id}/deduct-stock`, null, {
+    params: { quantity: 1 }
+  })
+  if (res && res.code === 200) {
+    return res.data
+  }
+  throw new Error(res?.message || '购买失败')
 }
 
 /**
- * 获取分类列表（Mock）
+ * 获取分类列表（真实接口）
+ * 适配 Books.vue 中 `const res = await listCategories()` 的调用
+ * 注意：Book 服务的分类接口走网关是 /api/categories
  */
 export async function listCategories() {
-  return mockRequest(() => categories, { delay: 300 })
+  const res = await request.get('/categories')
+  if (res && res.code === 200) {
+    return res.data || []
+  }
+  throw new Error(res?.message || '获取分类失败')
 }
