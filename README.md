@@ -11,7 +11,7 @@
 
 
 
-# 教材商城系统（book-mall）
+# 教材商城系统（textbook_mall）
 
 ## 1. 项目简介
 基于 Spring Cloud Alibaba + Vue 3 的微服务教材商城。包含用户、分类、教材、购物车、订单、支付、管理员、地址、评价 9 个微服务 + API 网关。
